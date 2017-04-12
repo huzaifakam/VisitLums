@@ -27,6 +27,127 @@ def register(request):
  
     return render(request, 'registration/register.html', {'form': form, })
 
+def home(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def hostLogin(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def hostDashboard(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def hostRequest(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def hostRequestSpecial(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def hostSettings(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def hostLogout(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def guardLogin(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def guardLogout(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def adminLogin(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def adminDashboard(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def adminRequest(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def adminRequestSpecial(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def adminSettings(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+def adminLogout(request):
+    if request.method == 'POST':
+        form = @Add_Form(request.POST)
+    else:
+        form = @Add_Form()
+
+    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+
+
 def registerVisitor(request):
     if request.method == 'POST':
         form = VisitorForm(request.POST)
