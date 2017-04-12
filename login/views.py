@@ -27,13 +27,13 @@ def register(request):
  
     return render(request, 'registration/register.html', {'form': form, })
 
-def home(request):
-    if request.method == 'POST':
-        form = @Add_Form(request.POST)
-    else:
-        form = @Add_Form()
+# def home(request):
+#     if request.method == 'POST':
+#         form = @Add_Form(request.POST)
+#     else:
+#         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+#     return render(request, '<folderName>/home.html', {'form': form,})
 
 def hostLogin(request):
     if request.method == 'POST':
@@ -41,7 +41,7 @@ def hostLogin(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'host/hostLogin.html', {'form': form,})
 
 def hostDashboard(request):
     if request.method == 'POST':
@@ -49,7 +49,7 @@ def hostDashboard(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'host/hostDashboard.html', {'form': form,})
 
 def hostRequest(request):
     if request.method == 'POST':
@@ -57,7 +57,7 @@ def hostRequest(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'host/hostRequest.html', {'form': form,})
 
 def hostRequestSpecial(request):
     if request.method == 'POST':
@@ -65,7 +65,7 @@ def hostRequestSpecial(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'host/hostRequestSpecial.html', {'form': form,})
 
 def hostSettings(request):
     if request.method == 'POST':
@@ -73,7 +73,7 @@ def hostSettings(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'host/hostSettings.html', {'form': form,})
 
 def hostLogout(request):
     if request.method == 'POST':
@@ -81,7 +81,7 @@ def hostLogout(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'host/hostLogout.html', {'form': form,})
 
 def guardLogin(request):
     if request.method == 'POST':
@@ -89,7 +89,7 @@ def guardLogin(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'guard/guardLogin.html', {'form': form,})
 
 def guardLogout(request):
     if request.method == 'POST':
@@ -97,7 +97,7 @@ def guardLogout(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'guard/guardLogout.html', {'form': form,})
 
 def adminLogin(request):
     if request.method == 'POST':
@@ -105,7 +105,7 @@ def adminLogin(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'admin/adminLogin.html', {'form': form,})
 
 def adminDashboard(request):
     if request.method == 'POST':
@@ -113,7 +113,7 @@ def adminDashboard(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'admin/adminDashboard.html', {'form': form,})
 
 def adminRequest(request):
     if request.method == 'POST':
@@ -121,7 +121,7 @@ def adminRequest(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'admin/adminRequest.html', {'form': form,})
 
 def adminRequestSpecial(request):
     if request.method == 'POST':
@@ -129,7 +129,7 @@ def adminRequestSpecial(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'admin/adminRequestSpecial.html', {'form': form,})
 
 def adminSettings(request):
     if request.method == 'POST':
@@ -137,7 +137,7 @@ def adminSettings(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'admin/adminSettings.html', {'form': form,})
 
 def adminLogout(request):
     if request.method == 'POST':
@@ -145,7 +145,7 @@ def adminLogout(request):
     else:
         form = @Add_Form()
 
-    return render(request, '<folderName>/<fileName.html>', {'form': form,})
+    return render(request, 'admin/adminLogout.html', {'form': form,})
 
 
 def registerVisitor(request):
