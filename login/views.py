@@ -25,11 +25,22 @@ def register(request):
     'form': form
     })
  
-    # return render_to_response(
-    # 'registration/register.html',
-    # {'form': form, },RequestContext(request), 
-    # )
     return render(request, 'registration/register.html', {'form': form, })
+
+def registerVisitor(request):
+    if request.method == 'POST':
+        form = VisitorForm(request.POST)
+
+        if form.is_valid():
+            return HttpResponseRedirect()
+    else:
+        form = VisitorForm()
+
+    variables = RequestContext(request, {
+        'form': form
+    })
+
+    return render(request, 'registration/admin.html', {'form': form, })
  
 def register_success(request):
     return render_to_response(
