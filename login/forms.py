@@ -23,3 +23,9 @@ class RegistrationForm(forms.Form):
             if self.cleaned_data['password1'] != self.cleaned_data['password2']:
                 raise forms.ValidationError(_("The two password fields did not match."))
         return self.cleaned_data
+
+class TempForm(forms.Form):
+    firstName = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=25)), label=_("First Name"))
+    lastName = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=25)), label=_("Last Name"))
+    CNIC = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=25)), label=_("CNIC"))
+    mobile = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=20)), label=_("Mobile"))
