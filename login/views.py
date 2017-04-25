@@ -7,6 +7,8 @@ from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 
+from django.views.decorators.csrf import csrf_exempt
+
  
 @csrf_protect
 def register(request):
@@ -26,6 +28,19 @@ def register(request):
     })
  
     return render(request, 'registration/register.html', {'form': form, })
+
+@csrf_exempt
+def frontPage(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(
+            email=form.cleaned_data['email'],
+            password=form.cleaned_data['password']
+            )
+    else:
+        form = LoginForm()
+    return render(request, 'front-page.html', {'form': form,})
 
 def hostLogin(request):
     if request.method == 'POST':

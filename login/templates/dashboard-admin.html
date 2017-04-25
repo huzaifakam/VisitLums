@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link href="css/styles.css" rel="stylesheet">
+    
+  <!-- Bootstrap core CSS -->
+  <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+  <link href="bootstrap/css/bootstrap-ms.css" rel="stylesheet">	
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 550px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+        
+    /* On small screens, set height to 'auto' for the grid */
+    @media screen and (max-width: 767px) {
+      .row.content {height: auto;} 
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#"> <span class="logo-visit">visit</span><span class="logo-lums">LUMS</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <p class="navbar-text">User Name</p>
+      </ul>
+
+    </div> <!-- .container-->
+  </nav>
+	
+  <br>
+	<br>
+	<br>
+<nav class="navbar navbar-inverse visible-xs">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                                                
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Dashboard</a></li>
+        <li><a href="#">Guest Requests</a></li>
+        <li><a href="#">Special Requests</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a href="#">Logout</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row content">
+    <div class="col-sm-3 sidenav hidden-xs">
+      <h2>Logo</h2>
+      <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a href="#section1">Dashboard</a></li>
+        <li><a href="#section2">Guest Requests</a></li>
+        <li><a href="#section3">Special Requests</a></li>
+        <li><a href="#section3">Settings</a></li>
+        <li><a href="#section4">Logout</a></li>
+
+      </ul><br>
+    </div>
+    <br>
+    
+    <div class="col-sm-9" >
+
+    <h1>Dashboard</h1>
+        
+      <div class="row">
+        <div class="col-sm-3 ">
+          <div class="well text-center ">
+            <h2><span class="logo-visit">89</span></h2>
+            <p>Total Requests</p> 
+            <a href="#" class="btn btn-success" role="button">Link Button</a>
+          
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="well text-center">
+            <h2><span class="logo-visit">89</span></h2>
+            <p>Pending Approval</p> 
+            <a href="#" class="btn btn-success" role="button">Link Button</a>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="well text-center">
+            <h2><span class="logo-visit">89</span></h2>
+            <p>Approved Requests</p> 
+            <a href="#" class="btn btn-success" role="button">Link Button</a>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="well text-center">
+            <h2><span class="logo-visit">89</span></h2>
+            <p>Visits Completed</p>
+            <a href="#" class="btn btn-success" role="button">Link Button</a>             
+          </div>
+        </div>
+      </div>
+<!--       <div class="row">
+        <div class="col-sm-4">
+          <div class="well">
+            <p>Text</p> 
+            <p>Text</p> 
+            <p>Text</p> 
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="well">
+            <p>Text</p> 
+            <p>Text</p> 
+            <p>Text</p> 
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="well">
+            <p>Text</p> 
+            <p>Text</p> 
+            <p>Text</p> 
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-8">
+          <div class="well">
+            <p>Text</p> 
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="well">
+            <p>Text</p> 
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+	<div class="container">
+			<p class="text-muted">&copy; 2017 - Group One - visitLUMS</p>
+	</div>
+</footer>
+
+
+</body>
+</html>

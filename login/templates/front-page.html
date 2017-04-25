@@ -1,0 +1,92 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Fixed Top Navbar Example for Bootstrap</title>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+      
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+		<link href="{% static 'bootstrap/css/bootstrap-ms.css' %}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+          
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"> <span class="logo-visit">visit</span><span class="logo-lums">LUMS</span></a>
+        </div>        
+      </div> <!-- .container-->
+    </nav>
+
+		
+		<div class="lums-background">
+			<div class="container" id="form-container">
+				<div class="row">
+					<div class="col-sm-4 col-ms-6" id="login-box">
+						
+						<br>
+						<h3>Login</h3>
+						<h5>You can log in using your campus ID</h5>
+						
+						<form>
+							<div class="form-group" id="email-form-group">
+								<label for="formEmail"></label>
+								<input type="email" id="formEmail" class="form-control" placeholder="Email address">
+							</div>
+							<div class="form-group" >
+								<label for="formPassword"></label>
+								<input type="password" id="formPassword" class="form-control" placeholder="Password">
+							</div>
+							
+							<br>
+							<button type="submit" class="btn btn-default btn-block" id="login-button">Login</button>
+						</form>
+					
+						<br>
+						<p>Forgot your password?  <a>Click here.</a></p>
+						<p>New here?  <a>Sign up.</a></p>
+						<br>
+						
+					</div>
+				</div>	
+			</div>
+				
+		</div>
+			
+			
+		<footer class="footer">
+			<div class="container">
+					<p class="text-muted">&copy; 2017 - Group One - visitLUMS</p>
+			</div>
+		</footer>
+			
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+      
+  </body>
+</html>
