@@ -29,3 +29,7 @@ class TempForm(forms.Form):
     lastName = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=25)), label=_("Last Name"))
     CNIC = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=25)), label=_("CNIC"))
     mobile = forms.CharField(widget=forms.TextInput(attrs=dict(required=True, max_length=20)), label=_("Mobile"))
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(widget=forms.TextInput(attrs=dict(required=True, max_length=30)), label=_("Email address"))
+    password = forms.CharField(widget=forms.PasswordInput(attrs=dict(required=True, max_length=30, render_value=False)), label=_("Password"))
