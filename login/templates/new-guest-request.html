@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,15 +11,15 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>visitLUMS - Special Guest Request</title>
+    <title>visitLUMS - New Guest Request</title>
 
     <!-- Custom styles for this template -->
-    <link href="../css/styles-special-guest-request.css" rel="stylesheet">
-		<link href="../normalize.css" rel="stylesheet">
+    <link href="{% static 'css/styles-new-guest-request.css' %}" rel="stylesheet">
+		<link href="{% static 'normalize.css' %}" rel="stylesheet">
       
     <!-- Bootstrap core CSS -->
-    <link href="../bootstrap/css/bootstrap.css" rel="stylesheet">
-		<link href="../bootstrap/css/bootstrap-ms.css" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+		<link href="{% static 'bootstrap/css/bootstrap-ms.css' %}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -58,34 +60,27 @@
 			</div>	
 			
 			<div class="col-xs-12 col-md-8 col-sm-8 col-ms-10" id="page-header-two">
-				<h1 class="page-header">Special Guest Request</h1>
+				<h1 class="page-header">New Guest Request</h1>
 				<p>Please enter complete details of your guest to ensure timely request approval.</p>
 				
 				<br>
 				<br>
-				
 				<form>
-					
 					<div class="form-group no-text col-md-6">
 						<label for="formFirstName"></label>
-						<input type="text" id="formFirstName" class="form-control" placeholder="First Name of Lead Guest">
+						<input type="text" id="formFirstName" class="form-control" placeholder="First Name">
 					</div>
 					<div class="form-group no-text col-md-6">
 						<label for="formLastName"></label>
-						<input type="text" id="formLastName" class="form-control" placeholder="Last Name of Lead Guest">
+						<input type="text" id="formLastName" class="form-control" placeholder="Last Name">
 					</div>
 					<div class="form-group no-text col-md-12">
 						<label for="formCNIC"></label>
-						<input type="text" id="formCNIC" class="form-control" placeholder="CNIC Number of Lead Guest">
+						<input type="text" id="formCNIC" class="form-control" placeholder="CNIC Number of Guest">
 					</div>
 					<div class="form-group no-text col-md-12">
 						<label for="formTel"></label>
-						<input type="tel" id="formTel" class="form-control" placeholder="Phone Number of Lead Guest">
-					</div>
-					
-					<div class="form-group no-text col-md-6">
-						<label for="formNoOfGuests"></label>
-						<input type="number" id="formNoOfGuests" class="form-control" placeholder="Enter the Number of Guests (Max. 20)" min="1" max="20">
+						<input type="tel" id="formTel" class="form-control" placeholder="Phone Number of Guest">
 					</div>
 					
 					<div class="form-group col-md-12">
@@ -99,7 +94,7 @@
 					</div>
 					
 					<div class="form-group col-md-12">
-						<label class="input-title">Upload a Photo of your Lead Guest</label>
+						<label class="input-title">Upload a Photo of your Guest</label>
 						<input type="file" name="img">
 					</div>
 					

@@ -13,7 +13,7 @@
     <title>visitLUMS</title>
 
     <!-- Custom styles for this template -->
-    <link href="../css/styles-front.css" rel="stylesheet">
+    <link href="../css/styles-signup.css" rel="stylesheet">
       
     <!-- Bootstrap core CSS -->
     <link href="../bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -53,26 +53,37 @@
 					<div class="col-md-4 col-sm-4" id="login-box">
 						
 						<br>
-						<h3 class="login-box-heading">Login</h3>
-						<h5>You can log in using your campus ID</h5>
+						<h3 class="login-box-heading">Sign Up</h3>
+						<h5>You can sign up using your campus ID</h5>
 						
 						<form>
-							<div class="form-group" id="email-form-group">
-								<label for="formEmail"></label>
-								<input type="email" id="formEmail" class="form-control" placeholder="Email Address">
+							<div class="form-group">
+								<label for="formFirstName"></label>
+								<input type="text" id="formFirstName" class="form-control" placeholder="First Name">
 							</div>
-							<div class="form-group" id="password-form-group">
+							<div class="form-group">
+								<label for="formLastName"></label>
+								<input type="text" id="formLastName" class="form-control" placeholder="Last Name">
+							</div>
+							<div class="form-group">
+								<label for="formEmail"></label>
+								<input type="email" id="formEmail" class="form-control" placeholder="Campus Email Address">
+							</div>
+							<div class="form-group">
 								<label for="formPassword"></label>
 								<input type="password" id="formPassword" class="form-control" placeholder="Password">
 							</div>
+							<div class="form-group">
+								<label for="formPasswordRetype"></label>
+								<input type="password" id="formPasswordRetype" class="form-control" placeholder="Retype Password">
+							</div>
 							
 							<br>
-							<button type="submit" class="btn btn-default btn-block" id="login-button">Login</button>
+							<button type="submit" class="btn btn-default btn-block" id="login-button">Sign Up</button>
 						</form>
 					
 						<br>
-						<p>Forgot your password?  <a>Click here.</a></p>
-						<p>New here?  <a>Sign up.</a></p>
+						<p>Already have an account?  <a>Log in.</a></p>
 						<br>
 						
 					</div> <!-- id="login-box"-->

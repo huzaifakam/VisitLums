@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>visitLUMS - Special Guest Request</title>
+
+    <!-- Custom styles for this template -->
+    <link href="../css/styles-view-my-requests.css" rel="stylesheet">
+		<link href="../normalize.css" rel="stylesheet">
+      
+    <!-- Bootstrap core CSS -->
+    <link href="../bootstrap/css/bootstrap.css" rel="stylesheet">
+		<link href="../bootstrap/css/bootstrap-ms.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+<!--      <div class="container">-->
+          
+        <div class="navbar-header col-xs-6">
+            <a class="navbar-brand" href="#"> <span class="logo-visit">visit</span><span class="logo-lums">LUMS</span></a>
+        </div>  
+			
+				<div class="navbar-header col-xs-6" id="navbar-username">
+            <a class="navbar-brand" id="navbar-username-text" href="#"> <span>Huzaifa Kamran </span></a>
+        </div>
+
+<!--      </div>  <!-- .container-->
+    </nav>
+
+		<!--	Fixed sidebar	-->		
+		<div class="row">
+			<div class="col-sm-3 col-md-2 col-xs-12 col-ms-6 sidebar">
+				<ul class="nav nav-sidebar">
+					<br>
+					<li><a class="sidebar-item" href="#">Dashboard</a></li>
+					<li><a class="sidebar-item" href="#">New Guest Request</a></li>
+					<li><a class="sidebar-item" href="#">Special Request</a></li>
+					<li><a class="sidebar-item" href="#">View My Requests</a></li>
+					<li><a class="sidebar-item" href="#">Account Settings</a></li>
+					<li><a class="sidebar-item" href="#">Logout</a></li>
+				</ul>
+			</div>	
+			
+			<div class="col-xs-12 col-md-8 col-sm-8 col-ms-10" id="page-header-two">
+				<h1 class="page-header">View My Requests</h1>
+				<p>Switch tabs to view different requests.</p>
+				
+				<br>
+				
+				<div class="bd-example bd-example-tabs" role="tabpanel">
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="all-req-tab" data-toggle="tab" href="#all-requests" role="tab" aria-controls="all-requests" aria-expanded="true">All Requests</a>
+<!--							<a class="nav-link" id="approved-req-tab" data-toggle="tab" href="#approved-requests" role="tab" aria-controls="approved-requests" aria-expanded="false">Approved Requests</a>-->
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="approved-req-tab" data-toggle="tab" href="#approved-requests" role="tab" aria-controls="approved-requests" aria-expanded="false">Approved Requests</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="pending-req-tab" data-toggle="tab" href="#pending-requests" role="tab" aria-controls="profile" aria-expanded="pending-requests">Pending Requests</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="failed-req-tab" data-toggle="tab" href="#failed-requests" role="tab" aria-controls="failed-requests" aria-expanded="false">Failed Requests</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="completed-visits-tab" data-toggle="tab" href="#completed-visits" role="tab" aria-controls="completed-visits" aria-expanded="false">Completed Visits</a>
+						</li>
+					</ul>
+					
+					
+					
+					<div class="tab-content" id="myTabContent">
+						
+<!--						<div role="tabpanel" class="tab-pane fade active show" id="all-requests" aria-labelledby="all-req-tab" aria-expanded="true">-->
+						<div role="tabpanel" class="tab-pane fade" id="all-requests" aria-labelledby="all-req-tab" aria-expanded="true">
+							
+							<div class="table-holder" data-example-id="">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Req. No.</th>
+											<th>Req. ID</th>
+											<th>Guest Name</th>
+											<th>Date of Arrival</th>
+											<th>Status</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>V-0021</td>
+											<td>Tashfeen Ahmed</td>
+											<td>The 20th of May, 2017</td>
+											<td class="guest-request-status-pending">Pending</td>
+											<td><a class="guest-request-actions-student-faculty" href="#"><span class="edit-request">Edit Request</span></a> <span> - </span> <a class="guest-request-actions-student-faculty" href="#"><span class="delete-request">Delete</span></a></td>
+										</tr>
+										<tr>
+											<th scope="row">2</th>
+											<td>V-0293</td>
+											<td>Suleman Shahid</td>
+											<td>The 7th of July, 2017</td>
+											<td class="guest-request-status-approved">Approved</td>
+											<td><a class="guest-request-actions-student-faculty" href="#"><span class="edit-request">Edit Request</span></a> <span> - </span> <a class="guest-request-actions-student-faculty" href="#"><span class="delete-request">Delete</span></a></td>
+										</tr>
+										<tr>
+											<th scope="row">3</th>
+											<td>V-0600</td>
+											<td>Saim Big Boy</td>
+											<td>The 8th of July, 2017</td>
+											<td class="guest-request-status-failed">Failed</td>
+											<td><a class="guest-request-actions-student-faculty" href="#"><span class="edit-request">Edit Request</span></a> <span> - </span> <a class="guest-request-actions-student-faculty" href="#"><span class="delete-request">Delete</span></a></td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+							
+						</div> <!--TabPanel-->
+						
+						
+						
+						<div class="tab-pane fade" id="approved-requests" role="tabpanel" aria-labelledby="approved-req-tab" aria-expanded="true">
+							
+							<div class="table-holder" data-example-id="">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Req. No.</th>
+											<th>Req. ID</th>
+											<th>Guest Name</th>
+											<th>Date of Arrival</th>
+											<th>Status</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">2</th>
+											<td>V-0293</td>
+											<td>Suleman Shahid</td>
+											<td>The 7th of July, 2017</td>
+											<td class="guest-request-status-approved">Approved</td>
+											<td><a class="guest-request-actions-student-faculty" href="#"><span class="edit-request">Edit Request</span></a> <span> - </span> <a class="guest-request-actions-student-faculty" href="#"><span class="delete-request">Delete</span></a></td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+						
+						<div class="tab-pane fade" id="pending-requests" role="tabpanel" aria-labelledby="pending-req-tab">
+							
+							<div class="table-holder" data-example-id="">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Req. No.</th>
+											<th>Req. ID</th>
+											<th>Guest Name</th>
+											<th>Date of Arrival</th>
+											<th>Status</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">1</th>
+											<td>V-0021</td>
+											<td>Tashfeen Ahmed</td>
+											<td>The 20th of May, 2017</td>
+											<td class="guest-request-status-pending">Pending</td>
+											<td><a class="guest-request-actions-student-faculty" href="#"><span class="edit-request">Edit Request</span></a> <span> - </span> <a class="guest-request-actions-student-faculty" href="#"><span class="delete-request">Delete</span></a></td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+						
+						<div class="tab-pane fade" id="failed-requests" role="tabpanel" aria-labelledby="failed-req-tab">
+							
+							<div class="table-holder" data-example-id="">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Req. No.</th>
+											<th>Req. ID</th>
+											<th>Guest Name</th>
+											<th>Date of Arrival</th>
+											<th>Status</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<th scope="row">3</th>
+											<td>V-0600</td>
+											<td>Saim Big Boy</td>
+											<td>The 8th of July, 2017</td>
+											<td class="guest-request-status-failed">Failed</td>
+											<td><a class="guest-request-actions-student-faculty" href="#"><span class="edit-request">Edit Request</span></a> <span> - </span> <a class="guest-request-actions-student-faculty" href="#"><span class="delete-request">Delete</span></a></td>
+										</tr>
+
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+						
+						<div class="tab-pane fade" id="completed-visits" role="tabpanel" aria-labelledby="completed-visits-tab">
+							
+							<div class="table-holder" data-example-id="">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Req. No.</th>
+											<th>Req. ID</th>
+											<th>Guest Name</th>
+											<th>Date of Arrival</th>
+											<th>Status</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+						
+					</div>
+				</div>				
+				
+		</div> <!-- class="row"-->
+			
+			
+		<footer class="footer">
+			<div class="container">
+					<p class="text-muted">&copy; 2017 - Group One - visitLUMS</p>
+			</div>
+		</footer>
+			
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+      
+  </body>
+</html>

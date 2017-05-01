@@ -1,5 +1,6 @@
 #views.py
 from login.forms import *
+from login.models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
@@ -42,6 +43,28 @@ def frontPage(request):
         form = LoginForm()
     return render(request, 'front-page.html', {'form': form,})
 
+def hostDashboard(request):
+	return render(request, 'dashboard.html')
+
+@csrf_exempt
+def hostGuestRequest(request):
+    if request.method == 'POST':
+        form = GuestRequestForm(request.POST)
+        print (request.POST['firstName'])
+        print (request.POST['lastName'])
+        print (request.POST['CNIC'])
+        print (request.POST['mobile'])
+
+        p = Person(20, (request.POST['lastName']), (request.POST['CNIC']), (request.POST['mobile']))
+        # p = Person(request.POST['firstName'], request.POST['lastName'], request.POST['CNIC'], request.POST['mobile'])
+        # print (p)
+        p.save()
+        print (Person.objects.all())
+    else:
+        form = GuestRequestForm()
+
+    return render(request, 'new-guest-request.html', {'form': form,})
+
 def hostLogin(request):
     if request.method == 'POST':
         form = TempForm(request.POST)
@@ -49,22 +72,6 @@ def hostLogin(request):
         form = TempForm()
 
     return render(request, 'host/hostLogin.html', {'form': form,})
-
-def hostDashboard(request):
-    if request.method == 'POST':
-        form = TempForm(request.POST)
-    else:
-        form = TempForm()
-
-    return render(request, 'host/hostDashboard.html', {'form': form,})
-
-def hostRequest(request):
-    if request.method == 'POST':
-        form = TempForm(request.POST)
-    else:
-        form = TempForm()
-
-    return render(request, 'host/hostRequest.html', {'form': form,})
 
 def hostRequestSpecial(request):
     if request.method == 'POST':

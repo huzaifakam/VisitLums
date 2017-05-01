@@ -9,10 +9,10 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>visitLUMS - Special Guest Request</title>
+    <title>visitLUMS - Account Settings</title>
 
     <!-- Custom styles for this template -->
-    <link href="../css/styles-special-guest-request.css" rel="stylesheet">
+    <link href="../css/styles-new-guest-request.css" rel="stylesheet">
 		<link href="../normalize.css" rel="stylesheet">
       
     <!-- Bootstrap core CSS -->
@@ -58,57 +58,41 @@
 			</div>	
 			
 			<div class="col-xs-12 col-md-8 col-sm-8 col-ms-10" id="page-header-two">
-				<h1 class="page-header">Special Guest Request</h1>
-				<p>Please enter complete details of your guest to ensure timely request approval.</p>
+				<h1 class="page-header">Account Settings</h1>
+				<p>You can make changes to your profile.</p>
 				
 				<br>
-				<br>
-				
 				<form>
 					
-					<div class="form-group no-text col-md-6">
-						<label for="formFirstName"></label>
-						<input type="text" id="formFirstName" class="form-control" placeholder="First Name of Lead Guest">
-					</div>
-					<div class="form-group no-text col-md-6">
-						<label for="formLastName"></label>
-						<input type="text" id="formLastName" class="form-control" placeholder="Last Name of Lead Guest">
-					</div>
-					<div class="form-group no-text col-md-12">
-						<label for="formCNIC"></label>
-						<input type="text" id="formCNIC" class="form-control" placeholder="CNIC Number of Lead Guest">
-					</div>
-					<div class="form-group no-text col-md-12">
-						<label for="formTel"></label>
-						<input type="tel" id="formTel" class="form-control" placeholder="Phone Number of Lead Guest">
-					</div>
-					
-					<div class="form-group no-text col-md-6">
-						<label for="formNoOfGuests"></label>
-						<input type="number" id="formNoOfGuests" class="form-control" placeholder="Enter the Number of Guests (Max. 20)" min="1" max="20">
-					</div>
-					
 					<div class="form-group col-md-12">
-						<label for="formDate" class="input-title">Date of Arrival</label>
-						<input type="date" id="formDate" class="form-control" placeholder="Date of Arrival">
-					</div>
-					
-					<div class="form-group no-text col-md-12">
-						<label for="formPurpose"></label>
-						<textarea id="formPurpose" class="form-control" rows="5" placeholder="Purpose of Visit"></textarea>
-					</div>
-					
-					<div class="form-group col-md-12">
-						<label class="input-title">Upload a Photo of your Lead Guest</label>
+						<label class="input-title">Upload your new Profile Picure</label>
 						<input type="file" name="img">
 					</div>
+					<div class="col-md-12">
+						<button class="btn btn-default" id="placeholder-btn">Update Profile Picture</button>
+					</div>
 					
+					
+					<div class="form-group no-text col-md-6">
+						<label for="formNewPass"></label>
+						<input type="password" id="formNewPass" class="form-control" placeholder="Enter New Password">
+					</div>
+					<div class="form-group no-text col-md-6">
+						<label for="formNewPassConfirm"></label>
+						<input type="password" id="formNewPassConfirm" class="form-control" placeholder="Retype Password">
+					</div>
+					<div class="col-md-12">
+						<button class="btn btn-default" id="placeholder-btn">Update Password</button>
+					</div>
+					
+					<div class="form-group no-text col-md-6">
+						<label for="formTel"></label>
+						<input type="tel" id="formTel" class="form-control" placeholder="Enter New Mobile Number">
+					</div>
+					<div class="col-md-12">
+						<button class="btn btn-default" id="placeholder-btn">Update Mobile Number</button>
+					</div>
 				</form>
-				
-				<div class="col-md-12">
-					<button class="btn btn-default" id="placeholder-btn">Submit</button>
-				</div>
-			</div>
 			
 		</div> <!-- class="row"-->
 			
