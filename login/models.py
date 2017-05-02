@@ -1,59 +1,15 @@
+from __future__ import unicode_literals
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-# Create your models here.
+class Profile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	userType = models.IntegerField(default=0)
 
-class Person(models.Model):
-    firstName = models.CharField(max_length=25)
-    lastName = models.CharField(max_length=25) # Check on how inheritence works!
-    CNIC = models.CharField(max_length=25)
-    mobile = models.CharField(max_length=20)
-
-    def __str__(self):
-        return (self.firstName + " " + self.lastName + ", " + str(self.mobile) + ", " + self.CNIC)
-
-class Visitor(Person):
-    pass
-
-class Admin(Person):
-    email = models.EmailField()
-
-class Guard(Person):
-    pass
-
-class Host(Person):
-    email = models.EmailField()
-
-class Requests(models.Model):
-    Pending = 'Pending'
-    Approved = 'Approved'
-    Denied = 'Denied'
-
-    approvalChoices = (
-        (Pending, 'Pending'),
-        (Approved, 'Approved'),
-        (Denied, 'Denied'),
-    )
-
-    hostID = models.ForeignKey(Host, on_delete=models.CASCADE)
-    dateRequested = models.DateTimeField('Date Requested', auto_now_add=True)
-    expectedArrivalDate = models.DateTimeField('Expected Arrival Date', null=True)
-    approval = models.CharField(max_length=8, choices=approvalChoices, default=Pending)
-    approvalTime = models.DateTimeField('Approval Time', null=True)
-    numGuests = models.IntegerField(default=1)
-    adminID = models.ForeignKey(Admin)
-
-class Visit(models.Model):
-    requestID = models.ForeignKey(Requests)
-    visitDate = models.DateTimeField('Visit Date', auto_now_add=True)
-    entryTime = models.DateTimeField('Entry Time', auto_now_add=True)
-    exitTime = models.DateTimeField('Exit Time', null=True)
-
-
-class GuestsPerVisit(models.Model):
-    visitID = models.ForeignKey(Visit)
-    visitorID = models.ForeignKey(Visitor)
-    guardID = models.ForeignKey(Guard)
-
-class RequestedGuests(models.Model):
-    requestID = models.ForeignKey(Requests)
-    visitorID = models.ForeignKey(Visitor)  
+@receiver(post_save, sender=User)
+def update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
