@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # import django.contrib.auth
-# django.contrib.auth.LOGIN_URL = '/'
-
+# django.contrib.auth.LOGIN_URL = 'host/login/'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -115,3 +114,6 @@ EMAIL_HOST_USER = 'kvmmaster3@gmail.com'
 EMAIL_HOST_PASSWORD = 'xenner321'
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Login Redirection
+LOGIN_REDIRECT_URL = 'home'
