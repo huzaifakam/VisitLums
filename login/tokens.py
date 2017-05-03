@@ -8,4 +8,4 @@ class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
             six.text_type(user.profile.email_confirmed)
         )
 
-account_activation_token = AccountActivationTokenGenerator()
+accountActivationToken = AccountActivationTokenGenerator()
