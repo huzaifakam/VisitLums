@@ -44,7 +44,6 @@ def hostAccountActivationSent(request):
     return HttpResponse()
 
 def hostActivate(request, uidb64, token):
-    print ("In activation")
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
