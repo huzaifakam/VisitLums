@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from login.forms import SignUpForm, AuthenticationForm
+from login.forms import SignUpForm, AuthenticationForm, RequestForm
 from django.contrib import messages
-from login.models import User, Profile
+from login.models import User, Profile, Requests
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.template.loader import render_to_string
@@ -17,30 +17,35 @@ from django.contrib.auth import logout
 import json
 
 @csrf_exempt
-@login_required(login_url='/host/login')
-def hostHome(request):
+@login_required(login_url='/login')
+def home(request):
     print ("hostHome")
     return HttpResponse()
 
 @csrf_exempt
-def hostLogin(request):
+def login_(request):
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = authenticate(username = request.POST['username'], password = request.POST['password'])
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect('/host/dashboard') # Goto Dashboard            
+                if user.profile.userType == 0:
+                    return HttpResponseRedirect('/host/dashboard') # Goto Dashboard
+                elif user.profile.userType == 1:
+                    return HttpResponseRedirect('/admin/dashboard') # Goto Admin Dashboard 
+                elif user.profile.userType == 2:
+                    return HttpResponseRedirect('/guard/dashboard') # Goto Guard Dashboard
         else:
             return JsonResponse(form.errors)
     else:
         return HttpResponse()
 
 @csrf_exempt
-def hostLogout(request):
+def logout_(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         logout(request)
-    return HttpResponseRedirect('/host/login')
+    return HttpResponseRedirect('/login')
 
 
 @csrf_exempt
@@ -62,7 +67,7 @@ def hostSignUp(request):
             message = 'Hi ' + str(user.get_full_name()) + ',\n\n' + 'Please click on the link below to confirm your registration:\n\n' + ('http://' + currentSite.domain + '/host/activate/' + str(uid.decode('utf-8')) + '/' + str(token) + '/')
             subject = 'VisitLUMS Account Activation Link'
 
-            send_mail(subject, message, 'kvmmaster3@gmail.com', [user.email])
+            send_mail(subject, message, 'kvmmaster3@gmail.com', [user.username])
             return HttpResponse()
         else:
             return JsonResponse(form.errors)
@@ -87,9 +92,67 @@ def hostActivate(request, uidb64, token):
         return HttpResponse() # TODO: Handle Invalid Activation
 
 @csrf_exempt
-def hostDashboard(request):
+def dashboard(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
-        # TODO: Get these numbers from the database!
-        return JsonResponse({'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+        if request.user.profile.userType == 0: # TODO: Get these numbers from the database!
+            total = (len(Requests.objects.all()))
+            approved = (len(Requests.objects.filter(approval='Approved')))
+            pending = (len(Requests.objects.filter(approval='Pending')))
+            visits = 5 # TODO: Remove this hardcoded number.
+
+            return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
+        elif request.user.profile.userType == 1:
+            print("ADMIN") # TODO: Complete This
+            return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+        elif request.user.profile.userType == 2:
+            print("GUARD")
+            return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
     else:
-        return HttpResponseRedirect('/host/login')
+        return HttpResponseRedirect('/login')
+
+@csrf_exempt
+def hostSettings(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        if request.method == 'POST':
+            return HttpResponse() # TODO: Complete this POST Request.
+        else:
+            return JsonResponse({'user': request.user.get_full_name()})
+    else:
+        return HttpResponseRedirect('/login')
+
+@csrf_exempt
+def hostNewGuestRequest(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        if request.method == 'POST':
+            form = RequestForm(request.POST)
+
+            if form.is_valid():
+                host = request.user.profile
+                visitorFirstName = form.cleaned_data['first_name']
+                visitorLastName = form.cleaned_data['last_name']
+                expectedArrivalDate = form.cleaned_data['date']
+                approval = 'Pending'
+                cnic = form.cleaned_data['cnic']
+                purposeVisit = form.cleaned_data['purpose']
+                admin = None
+                guard = None
+                photo = form.cleaned_data['photo']
+                specialRequest = form.cleaned_data['specialRequest']
+
+                if form.cleaned_data['numGuests'] != None:
+                    numGuests = form.cleaned_data['numGuests']
+                else:
+                    numGuests = 1
+
+                r = Requests(host=host, visitorFirstName=visitorFirstName, visitorLastName=visitorLastName,
+                    expectedArrivalDate=expectedArrivalDate, approval=approval, cnic=cnic, numGuests=numGuests,
+                    purposeVisit=purposeVisit, admin=admin, guard=guard, photo=photo, specialRequest=specialRequest)
+                r.save()
+
+                return HttpResponse() # TODO: Where to go after saving a record?
+            else:
+                return JsonResponse(form.errors)
+        else:
+            return JsonResponse({'user': request.user.get_full_name()})
+    else:
+        return HttpResponseRedirect('/login')

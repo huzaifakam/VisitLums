@@ -18,15 +18,20 @@ from django.contrib.auth import views as auth_views
 
  
 urlpatterns = [
-    url(r'^$', hostHome),
-    url(r'^host/login/$', hostLogin),
-    url(r'^host/logout/$', hostLogout),
+    url(r'^$', home),
+    url(r'^login/$', login_),
+    url(r'^logout/$', logout_),
     url(r'^host/signUp/$', hostSignUp),
     url(r'^host/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         hostActivate, name='activate'),
-    url(r'^host/dashboard/$', hostDashboard),
-    # url(r'^host/accountSettings/$', hostAccountSettings),
-    # url(r'^host/newGuestRequest/$', hostNewGuestRequest),
-    # url(r'^host/specialGuestRequest/$', specialGuestRequest),
+    url(r'^host/dashboard/$', dashboard),
+    url(r'^host/accountSettings/$', hostSettings),
+    url(r'^host/newGuestRequest/$', hostNewGuestRequest),
+    url(r'^host/specialGuestRequest/$', hostNewGuestRequest),
     # url(r'^host/view/$', hostView),
+
+    url(r'^admin/dashboard/$', dashboard),
+
+    url(r'^guard/dashboard/$', dashboard),
+    
 ]
