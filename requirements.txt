@@ -1,6 +1,0 @@
-Django==1.11
-django-allauth==0.32.0
-django-mongodb-engine==0.6.0
-djangotoolbox==1.8.0
-whitenoise==3.3.0
-Pillow==4.1.0
