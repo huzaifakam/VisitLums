@@ -26,14 +26,14 @@ def home(request):
 @csrf_exempt
 def login_(request):
     if request.method == 'POST':
-        dictObject = {'username': request.POST['username'], 'password': request.POST['password']}
-        queryDict = QueryDict('', mutable=True)
-
-        queryDict.update(dictObject)
-        form = AuthenticationForm(data=queryDict)
-
+        json_data = json.loads(request.body.decode('utf-8'))
+        print(json_data['username'])
+        dicto = {'username': json_data['username'], 'password': json_data['password']}
+        qdict = QueryDict('', mutable=True)
+        qdict.update(dicto)
+        form = AuthenticationForm(data=qdict)
         if form.is_valid():
-            user = authenticate(username = request.POST['username'], password = request.POST['password'])
+            user = authenticate(username = json_data['username'], password = json_data['password'])
             if user is not None:
                 login(request, user)
                 if user.profile.userType == 0:
@@ -57,7 +57,17 @@ def logout_(request):
 @csrf_exempt
 def hostSignUp(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        json_data = json.loads( request.body.decode('utf-8'))
+        print (request.POST)
+        dicto = {'first_name': json_data['first_name'],
+         'last_name': json_data['last_name'],
+         'password1': json_data['password1'],
+         'password2': json_data['password2'],
+         'username': json_data['username']
+         }
+        qdict = QueryDict('', mutable=True)
+        qdict.update(dicto)
+        form = SignUpForm(qdict)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
