@@ -27,16 +27,32 @@ class Requests(models.Model):
     )
 
     host = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    cnic = models.CharField(max_length=25)
-    visitorFirstName = models.CharField(max_length=25)
-    visitorLastName = models.CharField(max_length=25)
     dateRequested = models.DateTimeField('Date Requested', auto_now_add=True)
-    expectedArrivalDate = models.DateTimeField('Expected Arrival Date', null=True)
+    expectedArrivalDate = models.DateTimeField('Expected Arrival Date', blank=True, null=True)
     approval = models.CharField(max_length=8, choices=approvalChoices, default=Pending)
+    approvalTime = models.DateTimeField('Approval Time', blank=True, null=True)
     purposeVisit = models.CharField(max_length=1000)
-    approvalTime = models.DateTimeField('Approval Time', null=True)
     numGuests = models.IntegerField(default=1)
     admin = models.ForeignKey(Profile, related_name='ADMIN', blank=True, null=True)
-    guard = models.ForeignKey(Profile, related_name='GUARD', blank=True, null=True)
     photo = models.ImageField()
     specialRequest = models.BooleanField()
+
+class Visitor(models.Model):
+	firstName = models.CharField(max_length=50)
+	lastName = models.CharField(max_length=50)
+	cnic = models.CharField(max_length=50)
+	mobile = models.CharField(max_length=50)
+
+# class RequestedGuests(models.Model):
+# 	request = models.ForeignKey(Requests, on_delete=models.CASCADE)
+# 	visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
+
+class Visits(models.Model):
+	request = models.ForeignKey(Requests, on_delete=models.CASCADE)
+	entryTime = models.DateTimeField(blank=True, null=True)
+	exitTime = models.DateTimeField(blank=True, null=True)
+
+class GuestsPerVisit(models.Model):
+	visit = models.ForeignKey(Visits)
+	visitor = models.ForeignKey(Visitor)
+	guard = models.ForeignKey(Profile, related_name='Guard', blank=True, null=True)
