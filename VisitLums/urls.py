@@ -28,6 +28,10 @@ urlpatterns = [
     url(r'^host/accountSettings/$', hostSettings),
     url(r'^host/newGuestRequest/$', hostNewGuestRequest),
     url(r'^host/specialGuestRequest/$', hostNewGuestRequest),
+    url(r'^superuser/requestAdd/$', superuserRequestAdd),
+    url(r'^superuser/adminList/$', superuserAdminList),
+    url(r'^superuser/guardList/$', superuserGuardList),
+    url(r'^superuser/settings/$', superuserChangeSettings),
     # url(r'^host/view/$', hostView),
 
     url(r'^admin/dashboard/$', dashboard),

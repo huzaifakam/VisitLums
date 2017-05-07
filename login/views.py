@@ -17,6 +17,29 @@ from django.http import QueryDict
 
 import json
 
+if (len(list(Profile.objects.filter(userType=3))) == 0):
+    superUserDict = {'first_name': "Super",
+        'last_name': "User",
+        'password1': "password",
+        'password2': "password",
+        'username': "superuser"
+    }
+
+    qdict = QueryDict('', mutable=True)
+    qdict.update(superUserDict)
+    form = SignUpForm(qdict)
+
+    if form.is_valid() == True:
+        print ("Adding SuperUser!")
+        user = form.save(commit=False)
+        user.is_active = True
+        user.save()
+        user.refresh_from_db()  # load the profile instance created by the signal
+        user.profile.userType = 3 # 0 -> Hosts, 1 -> Admins, 2 -> Guards
+        user.profile.email_confirmed = True
+        user.save()
+
+
 @csrf_exempt
 @login_required(login_url='/login')
 def home(request):
@@ -27,7 +50,6 @@ def home(request):
 def login_(request):
     if request.method == 'POST':
         json_data = json.loads(request.body.decode('utf-8'))
-        print(json_data['username'])
         dicto = {'username': json_data['username'], 'password': json_data['password']}
         qdict = QueryDict('', mutable=True)
         qdict.update(dicto)
@@ -37,11 +59,13 @@ def login_(request):
             if user is not None:
                 login(request, user)
                 if user.profile.userType == 0:
-                    return HttpResponseRedirect('/host/dashboard') # Goto Dashboard
+                    return JsonResponse({"userType": 0, 'user': request.user.get_full_name()}) # Host
                 elif user.profile.userType == 1:
-                    return HttpResponseRedirect('/admin/dashboard') # Goto Admin Dashboard 
+                    return JsonResponse({"userType": 1, 'user': request.user.get_full_name()}) # Admin
                 elif user.profile.userType == 2:
-                    return HttpResponseRedirect('/guard/dashboard') # Goto Guard Dashboard
+                    return JsonResponse({"userType": 2, 'user': request.user.get_full_name()}) # Guard
+                elif user.profile.userType == 3:
+                    return JsonResponse({"userType": 3, 'user': request.user.get_full_name()}) # SuperUser
         else:
             return JsonResponse(form.errors)
     else:
@@ -51,14 +75,13 @@ def login_(request):
 def logout_(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         logout(request)
-    return HttpResponseRedirect('/login')
+    return HttpResponse()
 
 
 @csrf_exempt
 def hostSignUp(request):
     if request.method == 'POST':
         json_data = json.loads( request.body.decode('utf-8'))
-        print (request.POST)
         dicto = {'first_name': json_data['first_name'],
          'last_name': json_data['last_name'],
          'password1': json_data['password1'],
@@ -105,30 +128,102 @@ def hostActivate(request, uidb64, token):
         login(request, user)
         return HttpResponseRedirect('/host/dashboard')
     else:
-        return HttpResponse() # TODO: Handle Invalid Activation
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def superuserChangeSettings(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
+        if request.method == 'POST':
+            json_data = json.loads( request.body.decode('utf-8'))
+            password1 = json_data['password1']
+            password2 = json_data['password2']
+
+            if request.user.check_password(password1):
+                request.user.set_password(password2)
+                request.user.save()
+                return HttpResponse()
+            else:
+                return JsonResponse({'password1': "Invalid Password"})
+    else:
+        return HttpResponse(status=401)
 
 @csrf_exempt
 def dashboard(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
-        if request.user.profile.userType == 0: # TODO: Get these numbers from the database!
-            total = (len(Requests.objects.all()))
-            approved = (len(Requests.objects.filter(approval='Approved')))
-            pending = (len(Requests.objects.filter(approval='Pending')))
-            visits = 5 # TODO: Remove this hardcoded number.
+        if request.method == 'GET':
+            if request.user.profile.userType == 0: # TODO: Host
+                total = (len(Requests.objects.all()))
+                approved = (len(Requests.objects.filter(approval='Approved')))
+                pending = (len(Requests.objects.filter(approval='Pending')))
+                visits = 5 # TODO: Remove this hardcoded number.
 
-            return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
-        elif request.user.profile.userType == 1:
-            print("ADMIN") # TODO: Complete This
-            return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
-        elif request.user.profile.userType == 2:
-            hostList = {'hosts':[]}
-            
-            for i in (list(Requests.objects.filter(approval='Pending'))):
-                hostList['hosts'].append({'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
-            
-            return JsonResponse(hostList)
+                return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
+
+            elif request.user.profile.userType == 1: # Admin
+                print("ADMIN") # TODO: Complete This
+                return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+
+            elif request.user.profile.userType == 2: # Guard
+                hostList = {'hosts':[]}
+                
+                for i in (list(Requests.objects.filter(approval='Pending'))):
+                    hostList['hosts'].append({'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
+                return JsonResponse(hostList)
+
+            elif request.user.profile.userType == 3:
+                return JsonResponse({'userType': 3, 'user': request.user.get_full_name()})
     else:
-        return HttpResponseRedirect('/login')
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def superuserRequestAdd(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
+        if request.method == 'POST':
+            json_data = json.loads( request.body.decode('utf-8'))
+            dicto = {'first_name': json_data['first_name'],
+             'last_name': json_data['last_name'],
+             'password1': json_data['password1'],
+             'password2': json_data['password2'],
+             'username': json_data['username']
+             }
+            qdict = QueryDict('', mutable=True)
+            qdict.update(dicto)
+            form = SignUpForm(qdict)
+
+            if form.is_valid():
+                user = form.save(commit=False)
+                user.is_active = True
+                user.save()
+                user.refresh_from_db()  # load the profile instance created by the signal
+                user.profile.userType = json_data['userType'] # 0 -> Hosts, 1 -> Admins, 2 -> Guards
+                user.profile.email_confirmed = True
+                user.save()
+        return HttpResponse()
+    else:
+        return HttpResponse(status=401)
+
+
+@csrf_exempt
+def superuserAdminList(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
+        admins = {'admins': []}
+
+        for i in list(Profile.objects.filter(userType=1)):
+            admins['admins'].append({'firstName': i.user.first_name, 'lastName': i.user.last_name, 'email': i.user.username})
+        return JsonResponse(admins)
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def superuserGuardList(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
+        guards = {'guards': []}
+
+        for i in list(Profile.objects.filter(userType=2)):
+            guards['guards'].append({'firstName': i.user.first_name, 'lastName': i.user.last_name, 'email': i.user.username})
+        return JsonResponse(guards)
+    else:
+        return HttpResponse(status=401)
 
 @csrf_exempt
 def hostSettings(request):
@@ -138,7 +233,7 @@ def hostSettings(request):
         else:
             return JsonResponse({'user': request.user.get_full_name()})
     else:
-        return HttpResponseRedirect('/login')
+        return HttpResponse(status=401)
 
 @csrf_exempt
 def hostNewGuestRequest(request):
@@ -173,4 +268,4 @@ def hostNewGuestRequest(request):
         else:
             return JsonResponse({'user': request.user.get_full_name()})
     else:
-        return HttpResponseRedirect('/login') #TODO: Change all these Redirections
+        return HttpResponse(status=401)
