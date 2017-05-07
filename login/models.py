@@ -47,7 +47,7 @@ class RequestedGuests(models.Model):
 	visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
 
 class Visits(models.Model):
-	request = models.ForeignKey(Requests, on_delete=models.CASCADE)
+	request = models.OneToOneField(Requests, on_delete=models.CASCADE)
 	entryTime = models.DateTimeField(blank=True, null=True)
 	exitTime = models.DateTimeField(blank=True, null=True)
 

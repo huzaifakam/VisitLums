@@ -16,6 +16,8 @@ from django.conf.urls import url, include
 from login.views import *
 from django.contrib.auth import views as auth_views
 
+
+# Host - CompletedVisits - Left
  
 urlpatterns = [
     url(r'^$', home),
@@ -28,19 +30,22 @@ urlpatterns = [
     url(r'^host/accountSettings/$', hostSettings),
     url(r'^host/newGuestRequest/$', hostNewGuestRequest),
     url(r'^host/specialGuestRequest/$', hostNewGuestRequest),
-    url(r'^superuser/requestAdd/$', superuserRequestAdd),
-    url(r'^superuser/adminList/$', superuserAdminList),
-    url(r'^superuser/guardList/$', superuserGuardList),
-    url(r'^superuser/settings/$', superuserChangeSettings),
     url(r'^host/allRequests/$', hostAllRequests),
     url(r'^host/approvedRequests/$', hostApprovedRequests),
     url(r'^host/pendingRequests/$', hostPendingRequests),
     url(r'^host/failedRequests/$', hostFailedRequests),
-    # url(r'^host/completedVisits/$', hostCompletedVisits),
-    # url(r'^host/view/$', hostView),
 
+
+    url(r'^superuser/requestAdd/$', superuserRequestAdd),
+    url(r'^superuser/adminList/$', superuserAdminList),
+    url(r'^superuser/guardList/$', superuserGuardList),
+    url(r'^superuser/settings/$', superuserChangeSettings),
+    url(r'^host/completedVisits/$', hostCompletedVisits),
+    
     url(r'^admin/dashboard/$', dashboard),
+    url(r'^admin/requestCheck/$', requestCheck),
+
 
     url(r'^guard/dashboard/$', dashboard),
-    
+    url(r'^guard/getRequest/$', getRequest),
 ]

@@ -17,6 +17,7 @@ from django.http import QueryDict
 
 import json
 
+# SuperUser
 if (len(list(Profile.objects.filter(userType=3))) == 0):
     superUserDict = {'first_name': "Super",
         'last_name': "User",
@@ -39,13 +40,13 @@ if (len(list(Profile.objects.filter(userType=3))) == 0):
         user.profile.email_confirmed = True
         user.save()
 
-
+# Login
 @csrf_exempt
 @login_required(login_url='/login')
 def home(request):
-    print ("hostHome")
     return HttpResponse()
 
+# Logout
 @csrf_exempt
 def login_(request):
     if request.method == 'POST':
@@ -71,13 +72,14 @@ def login_(request):
     else:
         return HttpResponse(status=401)
 
+# Logout
 @csrf_exempt
 def logout_(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         logout(request)
     return HttpResponse()
 
-
+# Host Signup
 @csrf_exempt
 def hostSignUp(request):
     if request.method == 'POST':
@@ -113,6 +115,7 @@ def hostSignUp(request):
     else:
         return HttpResponse()
 
+# Host Signup
 @csrf_exempt
 def hostActivate(request, uidb64, token):
     try:
@@ -131,6 +134,178 @@ def hostActivate(request, uidb64, token):
         return HttpResponse(status=401)
 
 @csrf_exempt
+def hostSettings(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        if request.method == 'POST':
+            return HttpResponse() # TODO: Complete this POST Request.
+        else:
+            return JsonResponse({'user': request.user.get_full_name()})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostNewGuestRequest(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        if request.method == 'POST':
+            jsonData = json.loads( request.body.decode('utf-8'))
+
+            host = request.user.profile
+            expectedArrivalDate = jsonData['date']
+            purposeVisit = jsonData['purpose']
+            numGuests = len(jsonData['visitors'])
+            specialRequest = jsonData['specialRequest']
+            admin = None
+            approval = 'Pending'
+            approvalTime = None
+
+            if specialRequest == 0:
+                numGuests = len(jsonData['visitors'])
+            elif specialRequest == 1:
+                numGuests = jsonData['numGuests']
+
+            r = Requests(host=host, expectedArrivalDate=expectedArrivalDate, purposeVisit=purposeVisit, numGuests=numGuests, specialRequest=specialRequest, admin=admin, approval=approval, approvalTime=approvalTime)
+            r.save()
+
+            for i in (jsonData['visitors']):
+                firstName = i['firstName']
+                lastName = i['lastName']
+                cnic = i['cnic']
+                mobile = ['mobile']
+
+                v = Visitor(firstName=firstName, lastName=lastName, cnic=cnic, mobile=mobile)
+                v.save()
+                rG = RequestedGuests(request=r, visitor=v)
+                rG.save()
+
+            return HttpResponse()
+        else:
+            return JsonResponse({'user': request.user.get_full_name()})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostAllRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+            for i in list(Requests.objects.filter(host=user)):
+                results['requests'].append({'id': i.id, 'name': i.host.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
+    else:
+        return HttpResponse(status=401)  
+
+@csrf_exempt
+def hostApprovedRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+            for i in list(Requests.objects.filter(approval='Approved', host=user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostPendingRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+            for i in list(Requests.objects.filter(approval='Pending', user=user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostFailedRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+            for i in list(Requests.objects.filter(approval='Denied', user=user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostCompletedVisits(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'visits':[]} # TODO
+        if request.method == 'GET':
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+
+            for i in list(Visits.objects.filter(request__host=user)):
+                print(i) # Complete it!
+
+    else:
+        return HttpResponse(status=401) 
+
+@csrf_exempt
+def dashboard(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        user = Profile.objects.get(user=User.objects.get(username=request.user))
+
+        if request.method == 'GET':
+            if request.user.profile.userType == 0: # TODO: Host
+                total = len(list(Requests.objects.filter(host=user)))
+                approved = len(list(Requests.objects.filter(host=user, approval='Approved')))
+                pending = len(list(Requests.objects.filter(host=user, approval='Pending')))
+                visits = 5 # TODO: Remove this hardcoded number.
+
+                return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
+
+            elif request.user.profile.userType == 1: # Admin
+                print("ADMIN") # TODO: Complete This
+                return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+
+            elif request.user.profile.userType == 2: # Guard
+                hostList = {'hosts':[]}
+                
+                for i in (list(Requests.objects.filter(approval='Approved'))):
+                    hostList['hosts'].append({'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
+                return JsonResponse(hostList)
+
+            elif request.user.profile.userType == 3:
+                return JsonResponse({'userType': 3, 'user': request.user.get_full_name()})
+    else:
+        return HttpResponse(status=401)
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@csrf_exempt
+def requestCheck(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
+        if (request.method == 'POST'):
+            jsonData = json.loads( request.body.decode('utf-8'))
+            r = Requests.objects.get(id=jsonData['id'])
+            r.approval = jsonData['approval']
+            r.approvalTime = datetime.now()
+            r.save()
+    else:
+        return HttpResponse(status=401)
+
+def getRequest(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        if (request.method == 'GET'):
+            result = {'visitors': []}
+            jsonData = json.loads( request.body.decode('utf-8'))
+            r = Requests.objects.get(id=jsonData['id'])
+
+            result['host'] = r.host.get_full_name()
+            result['numGuest'] = r.numGuests
+            result['admin'] = r.admin.get_full_name()
+            result['requestType'] = r.specialRequest
+
+            for i in list(RequestedGuests.objects.filter(request=r)):
+                result['visitors'].append({'firstName':i.firstName, 'lastName':i.lastName, 'cnic':i.cnic, 'mobile':i.mobile})
+            return JsonResponse(result)
+    else:
+        return HttpResponse(status=401)
+
+# -----------------------------------------------------------------------------------------------------------
+
+@csrf_exempt
 def superuserChangeSettings(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
         if request.method == 'POST':
@@ -144,34 +319,6 @@ def superuserChangeSettings(request):
                 return HttpResponse()
             else:
                 return JsonResponse({'password1': "Invalid Password"})
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
-def dashboard(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        if request.method == 'GET':
-            if request.user.profile.userType == 0: # TODO: Host
-                total = (len(Requests.objects.all()))
-                approved = (len(Requests.objects.filter(approval='Approved')))
-                pending = (len(Requests.objects.filter(approval='Pending')))
-                visits = 5 # TODO: Remove this hardcoded number.
-
-                return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
-
-            elif request.user.profile.userType == 1: # Admin
-                print("ADMIN") # TODO: Complete This
-                return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
-
-            elif request.user.profile.userType == 2: # Guard
-                hostList = {'hosts':[]}
-                
-                for i in (list(Requests.objects.filter(approval='Pending'))):
-                    hostList['hosts'].append({'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
-                return JsonResponse(hostList)
-
-            elif request.user.profile.userType == 3:
-                return JsonResponse({'userType': 3, 'user': request.user.get_full_name()})
     else:
         return HttpResponse(status=401)
 
@@ -222,96 +369,6 @@ def superuserGuardList(request):
         for i in list(Profile.objects.filter(userType=2)):
             guards['guards'].append({'firstName': i.user.first_name, 'lastName': i.user.last_name, 'email': i.user.username})
         return JsonResponse(guards)
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
-def hostSettings(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        if request.method == 'POST':
-            return HttpResponse() # TODO: Complete this POST Request.
-        else:
-            return JsonResponse({'user': request.user.get_full_name()})
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
-def hostNewGuestRequest(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        if request.method == 'POST':
-            jsonData = json.loads( request.body.decode('utf-8'))
-
-            host = request.user.profile
-            expectedArrivalDate = jsonData['date']
-            purposeVisit = jsonData['purpose']
-            numGuests = len(jsonData['visitors'])
-            specialRequest = jsonData['specialRequest']
-            admin = None
-            approval = 'Pending'
-            approvalTime = None
-
-            r = Requests(host=host, expectedArrivalDate=expectedArrivalDate, purposeVisit=purposeVisit, numGuests=numGuests, specialRequest=specialRequest, admin=admin, approval=approval, approvalTime=approvalTime)
-            r.save()
-
-            for i in (jsonData['visitors']):
-                firstName = i['firstName']
-                lastName = i['lastName']
-                cnic = i['cnic']
-                mobile = ['mobile']
-
-                v = Visitor(firstName=firstName, lastName=lastName, cnic=cnic, mobile=mobile)
-                v.save()
-                rG = RequestedGuests(request=r, visitor=v)
-                rG.save()
-
-            return HttpResponse()
-        else:
-            return JsonResponse({'user': request.user.get_full_name()})
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
-def hostAllRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        results = {'requests':[]}
-        user = Profile.objects.get(user=User.objects.get(username=request.user))
-        if request.method == 'GET':
-            for i in list(Requests.objects.filter(host=user)):
-                results['requests'].append({'id': i.id, 'name': i.host.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
-            return JsonResponse(results)
-    else:
-        return HttpResponse(status=401)  
-
-@csrf_exempt
-def hostApprovedRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        results = {'requests':[]}
-        user = Profile.objects.get(user=User.objects.get(username=request.user))
-        if request.method == 'GET':
-            for i in list(Requests.objects.filter(approval='Approved', host=user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
-def hostPendingRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        results = {'requests':[]}
-        user = Profile.objects.get(user=User.objects.get(username=request.user))
-        if request.method == 'GET':
-            for i in list(Requests.objects.filter(approval='Pending', user=user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
-def hostFailedRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
-        results = {'requests':[]}
-        user = Profile.objects.get(user=User.objects.get(username=request.user))
-        if request.method == 'GET':
-            for i in list(Requests.objects.filter(approval='Denied', user=user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
     else:
         return HttpResponse(status=401)
 
