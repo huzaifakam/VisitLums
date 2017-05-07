@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from login.forms import SignUpForm, AuthenticationForm
 from django.contrib import messages
-from login.models import User, Profile, Requests, Visitor, RequestedGuests
+from login.models import User, Profile, Requests, Visitor, RequestedGuests, Visits
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.template.loader import render_to_string
@@ -18,27 +18,30 @@ from django.http import QueryDict
 import json
 
 # SuperUser
-if (len(list(Profile.objects.filter(userType=3))) == 0):
-    superUserDict = {'first_name': "Super",
-        'last_name': "User",
-        'password1': "password",
-        'password2': "password",
-        'username': "superuser"
-    }
+try:
+    if (len(list(Profile.objects.filter(userType=3))) == 0):
+        superUserDict = {'first_name': "Super",
+            'last_name': "User",
+            'password1': "password",
+            'password2': "password",
+            'username': "superuser"
+        }
 
-    qdict = QueryDict('', mutable=True)
-    qdict.update(superUserDict)
-    form = SignUpForm(qdict)
+        qdict = QueryDict('', mutable=True)
+        qdict.update(superUserDict)
+        form = SignUpForm(qdict)
 
-    if form.is_valid() == True:
-        print ("Adding SuperUser!")
-        user = form.save(commit=False)
-        user.is_active = True
-        user.save()
-        user.refresh_from_db()  # load the profile instance created by the signal
-        user.profile.userType = 3 # 0 -> Hosts, 1 -> Admins, 2 -> Guards
-        user.profile.email_confirmed = True
-        user.save()
+        if form.is_valid() == True:
+            print ("Adding SuperUser!")
+            user = form.save(commit=False)
+            user.is_active = True
+            user.save()
+            user.refresh_from_db()  # load the profile instance created by the signal
+            user.profile.userType = 3 # 0 -> Hosts, 1 -> Admins, 2 -> Guards
+            user.profile.email_confirmed = True
+            user.save()
+except Exception as E:
+    pass
 
 # Login
 @csrf_exempt
@@ -77,7 +80,7 @@ def login_(request):
 def logout_(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         logout(request)
-    return HttpResponse()
+    return HttpResponse("Logged Out!")
 
 # Host Signup
 @csrf_exempt
@@ -135,7 +138,7 @@ def hostActivate(request, uidb64, token):
 
 @csrf_exempt
 def hostSettings(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         if request.method == 'POST':
             return HttpResponse() # TODO: Complete this POST Request.
         else:
@@ -145,7 +148,7 @@ def hostSettings(request):
 
 @csrf_exempt
 def hostNewGuestRequest(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         if request.method == 'POST':
             jsonData = json.loads( request.body.decode('utf-8'))
 
@@ -167,17 +170,17 @@ def hostNewGuestRequest(request):
             r.save()
 
             for i in (jsonData['visitors']):
-                firstName = i['firstName']
-                lastName = i['lastName']
+                first_name = i['first_name']
+                last_name = i['last_name']
                 cnic = i['cnic']
                 mobile = ['mobile']
 
-                v = Visitor(firstName=firstName, lastName=lastName, cnic=cnic, mobile=mobile)
+                v = Visitor(first_name=first_name, last_name=last_name, cnic=cnic, mobile=mobile)
                 v.save()
                 rG = RequestedGuests(request=r, visitor=v)
                 rG.save()
 
-            return HttpResponse()
+            return HttpResponse("Request Added")
         else:
             return JsonResponse({'user': request.user.get_full_name()})
     else:
@@ -185,59 +188,66 @@ def hostNewGuestRequest(request):
 
 @csrf_exempt
 def hostAllRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         results = {'requests':[]}
         if request.method == 'GET':
             user = Profile.objects.get(user=User.objects.get(username=request.user))
             for i in list(Requests.objects.filter(host=user)):
-                results['requests'].append({'id': i.id, 'name': i.host.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
             return JsonResponse(results)
     else:
         return HttpResponse(status=401)  
 
 @csrf_exempt
 def hostApprovedRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         results = {'requests':[]}
         if request.method == 'GET':
             user = Profile.objects.get(user=User.objects.get(username=request.user))
             for i in list(Requests.objects.filter(approval='Approved', host=user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
     else:
         return HttpResponse(status=401)
 
 @csrf_exempt
 def hostPendingRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         results = {'requests':[]}
         if request.method == 'GET':
             user = Profile.objects.get(user=User.objects.get(username=request.user))
-            for i in list(Requests.objects.filter(approval='Pending', user=user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+            for i in list(Requests.objects.filter(approval='Pending', host=user)):
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
     else:
         return HttpResponse(status=401)
 
 @csrf_exempt
 def hostFailedRequests(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         results = {'requests':[]}
         if request.method == 'GET':
             user = Profile.objects.get(user=User.objects.get(username=request.user))
-            for i in list(Requests.objects.filter(approval='Denied', user=user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+            for i in list(Requests.objects.filter(approval='Denied', host=user)):
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
     else:
         return HttpResponse(status=401)
 
 @csrf_exempt
 def hostCompletedVisits(request):
-    if ((request.user.is_authenticated() and request.user.is_active)):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         results = {'visits':[]} # TODO
         if request.method == 'GET':
             user = Profile.objects.get(user=User.objects.get(username=request.user))
 
             for i in list(Visits.objects.filter(request__host=user)):
-                print(i) # Complete it!
-
+                print(i) # TODO: Complete it!
+            return JsonResponse(results)
     else:
         return HttpResponse(status=401) 
 
@@ -247,7 +257,7 @@ def dashboard(request):
         user = Profile.objects.get(user=User.objects.get(username=request.user))
 
         if request.method == 'GET':
-            if request.user.profile.userType == 0: # TODO: Host
+            if request.user.profile.userType == 0:
                 total = len(list(Requests.objects.filter(host=user)))
                 approved = len(list(Requests.objects.filter(host=user, approval='Approved')))
                 pending = len(list(Requests.objects.filter(host=user, approval='Pending')))
@@ -255,11 +265,11 @@ def dashboard(request):
 
                 return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
 
-            elif request.user.profile.userType == 1: # Admin
+            elif request.user.profile.userType == 2: # Admin
                 print("ADMIN") # TODO: Complete This
-                return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+                return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
 
-            elif request.user.profile.userType == 2: # Guard
+            elif request.user.profile.userType == 1: # Guard
                 hostList = {'hosts':[]}
                 
                 for i in (list(Requests.objects.filter(approval='Approved'))):
@@ -275,7 +285,7 @@ def dashboard(request):
 
 @csrf_exempt
 def requestCheck(request):
-    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
         if (request.method == 'POST'):
             jsonData = json.loads( request.body.decode('utf-8'))
             r = Requests.objects.get(id=jsonData['id'])
@@ -286,7 +296,7 @@ def requestCheck(request):
         return HttpResponse(status=401)
 
 def guardGetRequest(request):
-    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
         if (request.method == 'GET'):
             result = {'visitors': []}
             jsonData = json.loads( request.body.decode('utf-8'))
@@ -298,13 +308,13 @@ def guardGetRequest(request):
             result['requestType'] = r.specialRequest
 
             for i in list(RequestedGuests.objects.filter(request=r)):
-                result['visitors'].append({'firstName':i.firstName, 'lastName':i.lastName, 'cnic':i.cnic, 'mobile':i.mobile})
+                result['visitors'].append({'first_name':i.first_name, 'last_name':i.last_name, 'cnic':i.cnic, 'mobile':i.mobile})
             return JsonResponse(result)
     else:
         return HttpResponse(status=401)
 
 def guardMarkEntry(request):
-    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
         if (request.method == 'POST'):
             jsonData = json.loads( request.body.decode('utf-8'))
             r = Requests.objects.get(id=jsonData['id'])
@@ -314,7 +324,7 @@ def guardMarkEntry(request):
         return HttpResponse(status=401)
 
 def guardMarkExit(request):
-    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
         if (request.method == 'POST'):
             jsonData = json.loads( request.body.decode('utf-8'))
             v = Visits.objects.get(request=r)
@@ -349,8 +359,8 @@ def superuserRequestAdd(request):
             json_data = json.loads( request.body.decode('utf-8'))
             dicto = {'first_name': json_data['first_name'],
              'last_name': json_data['last_name'],
-             'password1': json_data['password1'],
-             'password2': json_data['password2'],
+             'password1': json_data['password'],
+             'password2': json_data['password'],
              'username': json_data['username']
              }
             qdict = QueryDict('', mutable=True)
@@ -375,8 +385,8 @@ def superuserAdminList(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
         admins = {'admins': []}
 
-        for i in list(Profile.objects.filter(userType=1)):
-            admins['admins'].append({'firstName': i.user.first_name, 'lastName': i.user.last_name, 'email': i.user.username})
+        for i in list(Profile.objects.filte_r(userType=1)):
+            admins['admins'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(admins)
     else:
         return HttpResponse(status=401)
@@ -387,7 +397,7 @@ def superuserGuardList(request):
         guards = {'guards': []}
 
         for i in list(Profile.objects.filter(userType=2)):
-            guards['guards'].append({'firstName': i.user.first_name, 'lastName': i.user.last_name, 'email': i.user.username})
+            guards['guards'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(guards)
     else:
         return HttpResponse(status=401)

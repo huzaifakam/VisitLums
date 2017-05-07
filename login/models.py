@@ -37,8 +37,8 @@ class Requests(models.Model):
     specialRequest = models.BooleanField()
 
 class Visitor(models.Model):
-	firstName = models.CharField(max_length=50)
-	lastName = models.CharField(max_length=50)
+	first_name = models.CharField(max_length=50)
+	last_name = models.CharField(max_length=50)
 	cnic = models.CharField(max_length=50)
 	mobile = models.CharField(max_length=50)
 
