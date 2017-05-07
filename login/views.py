@@ -188,6 +188,61 @@ def hostNewGuestRequest(request):
         return HttpResponse(status=401)
 
 @csrf_exempt
+def adminAllRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.all()):
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'host': i.host.user.get_full_name(), 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)        
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def adminApprovedRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(approval="Approved")):
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'host': i.host.user.get_full_name(), 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results) 
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def adminPendingRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(approval="Pending")):
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'host': i.host.user.get_full_name(), 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def adminFailedRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(approval="Denied")):
+                visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name)  for x in list(RequestedGuests.objects.filter(request=i))]
+                results['requests'].append({'id': i.id, 'host': i.host.user.get_full_name(), 'name': visitorNames, 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def adminCompletedVisits(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        return HttpResponse() # TODO
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
 def hostAllRequests(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         results = {'requests':[]}
@@ -267,8 +322,11 @@ def dashboard(request):
                 return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
 
             elif request.user.profile.userType == 2: # Admin
-                print("ADMIN") # TODO: Complete This
-                return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+                total = len(list(Requests.objects.all()))
+                approved = len(list(Requests.objects.filter(approval='Approved')))
+                pending = len(list(Requests.objects.filter(approval='Pending')))
+                visits = 5 # TODO: Remove this hardcoded number.
+                return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': 5})
 
             elif request.user.profile.userType == 1: # Guard
                 hostList = {'hosts':[]}

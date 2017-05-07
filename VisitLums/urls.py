@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^host/accountSettings/$', hostSettings),
     url(r'^host/newGuestRequest/$', hostNewGuestRequest),
     url(r'^host/specialGuestRequest/$', hostNewGuestRequest),
+
     url(r'^host/allRequests/$', hostAllRequests),
     url(r'^host/approvedRequests/$', hostApprovedRequests),
     url(r'^host/pendingRequests/$', hostPendingRequests),
@@ -43,6 +44,11 @@ urlpatterns = [
     
     url(r'^admin/dashboard/$', dashboard),
     url(r'^admin/requestCheck/$', adminRequestCheck),
+    url(r'^admin/allRequests/$', adminAllRequests),
+    url(r'^admin/approvedRequests/$', adminApprovedRequests),
+    url(r'^admin/pendingRequests/$', adminPendingRequests),
+    url(r'^admin/failedRequests/$', adminFailedRequests),
+    url(r'^admin/completedVisits/$', adminCompletedVisits),
 
     url(r'^guard/dashboard/$', dashboard),
     url(r'^guard/getRequest/$', guardGetRequest),
