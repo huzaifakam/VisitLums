@@ -120,38 +120,52 @@ def hostSettings(request):
     else:
         return HttpResponseRedirect('/login')
 
+
+# def save_events_json(request):
+#     if request.is_ajax():
+#         if request.method == 'POST':
+#             print 'Raw Data: "%s"' % request.body   
+#     return HttpResponse("OK")
+
 @csrf_exempt
 def hostNewGuestRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         if request.method == 'POST':
-            form = RequestForm(request.POST)
+            # form = RequestForm(request.POST)
+            print (request.body)
+            json_data = json.loads( request.body.decode('utf-8'))
+            print (json_data['date'])
+            print (json_data['purpose'])
+            print(len(json_data['visitors']))
+            # print (form)
+            return HttpResponse()
 
-            if form.is_valid():
-                host = request.user.profile
-                visitorFirstName = form.cleaned_data['first_name']
-                visitorLastName = form.cleaned_data['last_name']
-                expectedArrivalDate = form.cleaned_data['date']
-                approval = 'Pending'
-                cnic = form.cleaned_data['cnic']
-                purposeVisit = form.cleaned_data['purpose']
-                admin = None
-                guard = None
-                photo = form.cleaned_data['photo']
-                specialRequest = form.cleaned_data['specialRequest']
+            # if form.is_valid():
+            #     host = request.user.profile
+            #     visitorFirstName = form.cleaned_data['first_name']
+            #     visitorLastName = form.cleaned_data['last_name']
+            #     expectedArrivalDate = form.cleaned_data['date']
+            #     approval = 'Pending'
+            #     cnic = form.cleaned_data['cnic']
+            #     purposeVisit = form.cleaned_data['purpose']
+            #     admin = None
+            #     guard = None
+            #     photo = form.cleaned_data['photo']
+            #     specialRequest = form.cleaned_data['specialRequest']
 
-                if form.cleaned_data['numGuests'] != None:
-                    numGuests = form.cleaned_data['numGuests']
-                else:
-                    numGuests = 1
+            #     if form.cleaned_data['numGuests'] != None:
+            #         numGuests = form.cleaned_data['numGuests']
+            #     else:
+            #         numGuests = 1
 
-                r = Requests(host=host, visitorFirstName=visitorFirstName, visitorLastName=visitorLastName,
-                    expectedArrivalDate=expectedArrivalDate, approval=approval, cnic=cnic, numGuests=numGuests,
-                    purposeVisit=purposeVisit, admin=admin, guard=guard, photo=photo, specialRequest=specialRequest)
-                r.save()
+            #     r = Requests(host=host, visitorFirstName=visitorFirstName, visitorLastName=visitorLastName,
+            #         expectedArrivalDate=expectedArrivalDate, approval=approval, cnic=cnic, numGuests=numGuests,
+            #         purposeVisit=purposeVisit, admin=admin, guard=guard, photo=photo, specialRequest=specialRequest)
+            #     r.save()
 
-                return HttpResponse() # TODO: Where to go after saving a record?
-            else:
-                return JsonResponse(form.errors)
+            #     return HttpResponse() # TODO: Where to go after saving a record?
+            # else:
+                # return JsonResponse(form.errors)
         else:
             return JsonResponse({'user': request.user.get_full_name()})
     else:

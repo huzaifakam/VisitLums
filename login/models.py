@@ -43,9 +43,9 @@ class Visitor(models.Model):
 	cnic = models.CharField(max_length=50)
 	mobile = models.CharField(max_length=50)
 
-# class RequestedGuests(models.Model):
-# 	request = models.ForeignKey(Requests, on_delete=models.CASCADE)
-# 	visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
+class RequestedGuests(models.Model):
+	request = models.ForeignKey(Requests, on_delete=models.CASCADE)
+	visitor = models.ForeignKey(Visitor, on_delete=models.CASCADE)
 
 class Visits(models.Model):
 	request = models.ForeignKey(Requests, on_delete=models.CASCADE)
