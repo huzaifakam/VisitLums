@@ -135,7 +135,6 @@ def hostSettings(request):
 def hostNewGuestRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         if request.method == 'POST':
-<<<<<<< HEAD
             jsonData = json.loads( request.body.decode('utf-8'))
 
             host = request.user.profile
@@ -160,15 +159,6 @@ def hostNewGuestRequest(request):
                 v.save()
                 rG = RequestedGuests(request=r, visitor=v)
                 rG.save()
-=======
-            # form = RequestForm(request.POST)
-            json_data = json.loads( request.body.decode('utf-8'))
-            print (json_data['date'])
-            print (json_data['purpose'])
-            print(len(json_data['visitors']))
-            # print (form)
-            return HttpResponse()
->>>>>>> 11f726871beda5d1306484906b62875c58506cba
 
             return HttpResponse()
         else:
