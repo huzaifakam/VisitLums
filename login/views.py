@@ -26,10 +26,12 @@ def home(request):
 @csrf_exempt
 def login_(request):
     if request.method == 'POST':
-        dicto = {'username': request.POST['username'], 'password': request.POST['password']}
-        qdict = QueryDict('', mutable=True)
-        qdict.update(dicto)
-        form = AuthenticationForm(data=qdict)
+        dictObject = {'username': request.POST['username'], 'password': request.POST['password']}
+        queryDict = QueryDict('', mutable=True)
+
+        queryDict.update(dictObject)
+        form = AuthenticationForm(data=queryDict)
+
         if form.is_valid():
             user = authenticate(username = request.POST['username'], password = request.POST['password'])
             if user is not None:
@@ -109,8 +111,12 @@ def dashboard(request):
             print("ADMIN") # TODO: Complete This
             return JsonResponse({'userType': 1, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
         elif request.user.profile.userType == 2:
-            print("GUARD")
-            return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': 2, 'approved': 3, 'pending': 4, 'visits': 5})
+            hostList = {'hosts':[]}
+            
+            for i in (list(Requests.objects.filter(approval='Pending'))):
+                hostList['hosts'].append({'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
+            
+            return JsonResponse(hostList)
     else:
         return HttpResponseRedirect('/login')
 
@@ -123,13 +129,6 @@ def hostSettings(request):
             return JsonResponse({'user': request.user.get_full_name()})
     else:
         return HttpResponseRedirect('/login')
-
-
-# def save_events_json(request):
-#     if request.is_ajax():
-#         if request.method == 'POST':
-#             print 'Raw Data: "%s"' % request.body   
-#     return HttpResponse("OK")
 
 @csrf_exempt
 def hostNewGuestRequest(request):
