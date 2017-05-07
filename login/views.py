@@ -16,6 +16,7 @@ from django.contrib.auth import logout
 from django.http import QueryDict
 
 import json
+from datetime import datetime
 
 # SuperUser
 try:
@@ -284,14 +285,17 @@ def dashboard(request):
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @csrf_exempt
-def requestCheck(request):
+def adminRequestCheck(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
         if (request.method == 'POST'):
             jsonData = json.loads( request.body.decode('utf-8'))
-            r = Requests.objects.get(id=jsonData['id'])
+            r = Requests.objects.get(id=jsonData['requestID'])
             r.approval = jsonData['approval']
             r.approvalTime = datetime.now()
             r.save()
+            return HttpResponse("Request Updated")
+        else:
+            return HttpResponse()
     else:
         return HttpResponse(status=401)
 
@@ -361,7 +365,7 @@ def superuserRequestAdd(request):
              'last_name': json_data['last_name'],
              'password1': json_data['password'],
              'password2': json_data['password'],
-             'username': json_data['username']
+             'username': json_data['username'] # TODO: Change username to email.
              }
             qdict = QueryDict('', mutable=True)
             qdict.update(dicto)
@@ -372,10 +376,10 @@ def superuserRequestAdd(request):
                 user.is_active = True
                 user.save()
                 user.refresh_from_db()  # load the profile instance created by the signal
-                user.profile.userType = json_data['userType'] # 0 -> Hosts, 1 -> Admins, 2 -> Guards
+                user.profile.userType = json_data['userType'] # 0 -> Hosts, 1 -> Guards, 2 -> Admin
                 user.profile.email_confirmed = True
                 user.save()
-        return HttpResponse()
+        return HttpResponse("Added Record")
     else:
         return HttpResponse(status=401)
 
@@ -385,7 +389,7 @@ def superuserAdminList(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
         admins = {'admins': []}
 
-        for i in list(Profile.objects.filte_r(userType=1)):
+        for i in list(Profile.objects.filter(userType=2)):
             admins['admins'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(admins)
     else:
@@ -396,7 +400,7 @@ def superuserGuardList(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
         guards = {'guards': []}
 
-        for i in list(Profile.objects.filter(userType=2)):
+        for i in list(Profile.objects.filter(userType=1)):
             guards['guards'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(guards)
     else:

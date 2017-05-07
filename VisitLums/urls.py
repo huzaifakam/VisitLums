@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^superuser/settings/$', superuserChangeSettings),
     
     url(r'^admin/dashboard/$', dashboard),
-    url(r'^admin/requestCheck/$', requestCheck),
+    url(r'^admin/requestCheck/$', adminRequestCheck),
 
     url(r'^guard/dashboard/$', dashboard),
     url(r'^guard/getRequest/$', guardGetRequest),
