@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
-from login.forms import SignUpForm, AuthenticationForm, RequestForm
+from login.forms import SignUpForm, AuthenticationForm
 from django.contrib import messages
-from login.models import User, Profile, Requests
+from login.models import User, Profile, Requests, Visitor, RequestedGuests
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.template.loader import render_to_string
@@ -39,7 +39,7 @@ def login_(request):
         else:
             return JsonResponse(form.errors)
     else:
-        return HttpResponse()
+        return HttpResponse(status=401)
 
 @csrf_exempt
 def logout_(request):
@@ -131,42 +131,33 @@ def hostSettings(request):
 def hostNewGuestRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         if request.method == 'POST':
-            # form = RequestForm(request.POST)
-            print (request.body)
-            json_data = json.loads( request.body.decode('utf-8'))
-            print (json_data['date'])
-            print (json_data['purpose'])
-            print(len(json_data['visitors']))
-            # print (form)
+            jsonData = json.loads( request.body.decode('utf-8'))
+
+            host = request.user.profile
+            expectedArrivalDate = jsonData['date']
+            purposeVisit = jsonData['purpose']
+            numGuests = len(jsonData['visitors'])
+            specialRequest = jsonData['specialRequest']
+            admin = None
+            approval = 'Pending'
+            approvalTime = None
+
+            r = Requests(host=host, expectedArrivalDate=expectedArrivalDate, purposeVisit=purposeVisit, numGuests=numGuests, specialRequest=specialRequest, admin=admin, approval=approval, approvalTime=approvalTime)
+            r.save()
+
+            for i in (jsonData['visitors']):
+                firstName = i['firstName']
+                lastName = i['lastName']
+                cnic = i['cnic']
+                mobile = ['mobile']
+
+                v = Visitor(firstName=firstName, lastName=lastName, cnic=cnic, mobile=mobile)
+                v.save()
+                rG = RequestedGuests(request=r, visitor=v)
+                rG.save()
+
             return HttpResponse()
-
-            # if form.is_valid():
-            #     host = request.user.profile
-            #     visitorFirstName = form.cleaned_data['first_name']
-            #     visitorLastName = form.cleaned_data['last_name']
-            #     expectedArrivalDate = form.cleaned_data['date']
-            #     approval = 'Pending'
-            #     cnic = form.cleaned_data['cnic']
-            #     purposeVisit = form.cleaned_data['purpose']
-            #     admin = None
-            #     guard = None
-            #     photo = form.cleaned_data['photo']
-            #     specialRequest = form.cleaned_data['specialRequest']
-
-            #     if form.cleaned_data['numGuests'] != None:
-            #         numGuests = form.cleaned_data['numGuests']
-            #     else:
-            #         numGuests = 1
-
-            #     r = Requests(host=host, visitorFirstName=visitorFirstName, visitorLastName=visitorLastName,
-            #         expectedArrivalDate=expectedArrivalDate, approval=approval, cnic=cnic, numGuests=numGuests,
-            #         purposeVisit=purposeVisit, admin=admin, guard=guard, photo=photo, specialRequest=specialRequest)
-            #     r.save()
-
-            #     return HttpResponse() # TODO: Where to go after saving a record?
-            # else:
-                # return JsonResponse(form.errors)
         else:
             return JsonResponse({'user': request.user.get_full_name()})
     else:
-        return HttpResponseRedirect('/login')
+        return HttpResponseRedirect('/login') #TODO: Change all these Redirections

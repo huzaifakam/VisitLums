@@ -34,7 +34,6 @@ class Requests(models.Model):
     purposeVisit = models.CharField(max_length=1000)
     numGuests = models.IntegerField(default=1)
     admin = models.ForeignKey(Profile, related_name='ADMIN', blank=True, null=True)
-    photo = models.ImageField()
     specialRequest = models.BooleanField()
 
 class Visitor(models.Model):
