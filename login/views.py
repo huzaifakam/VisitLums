@@ -13,6 +13,7 @@ from login.tokens import accountActivationToken
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import send_mail
 from django.contrib.auth import logout
+from django.http import QueryDict
 
 import json
 
@@ -25,7 +26,10 @@ def home(request):
 @csrf_exempt
 def login_(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        dicto = {'username': request.POST['username'], 'password': request.POST['password']}
+        qdict = QueryDict('', mutable=True)
+        qdict.update(dicto)
+        form = AuthenticationForm(data=qdict)
         if form.is_valid():
             user = authenticate(username = request.POST['username'], password = request.POST['password'])
             if user is not None:
@@ -131,6 +135,7 @@ def hostSettings(request):
 def hostNewGuestRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         if request.method == 'POST':
+<<<<<<< HEAD
             jsonData = json.loads( request.body.decode('utf-8'))
 
             host = request.user.profile
@@ -155,6 +160,15 @@ def hostNewGuestRequest(request):
                 v.save()
                 rG = RequestedGuests(request=r, visitor=v)
                 rG.save()
+=======
+            # form = RequestForm(request.POST)
+            json_data = json.loads( request.body.decode('utf-8'))
+            print (json_data['date'])
+            print (json_data['purpose'])
+            print(len(json_data['visitors']))
+            # print (form)
+            return HttpResponse()
+>>>>>>> 11f726871beda5d1306484906b62875c58506cba
 
             return HttpResponse()
         else:
