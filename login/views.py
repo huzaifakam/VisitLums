@@ -269,3 +269,51 @@ def hostNewGuestRequest(request):
             return JsonResponse({'user': request.user.get_full_name()})
     else:
         return HttpResponse(status=401)
+
+@csrf_exempt
+def hostAllRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(user=request.user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)  
+
+@csrf_exempt
+def hostApprovedRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(approval='Approved', user=request.user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostPendingRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(approval='Pending', user=request.user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def hostFailedRequests(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
+        results = {'requests':[]}
+        if request.method == 'GET':
+            for i in list(Requests.objects.filter(approval='Denied', user=request.user)):
+                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+    else:
+        return HttpResponse(status=401)
+
+# @csrf_exempt
+# def hostcompletedVisits(request):
+#     if ((request.user.is_authenticated() and request.user.is_active)):
+#         if request.method == 'GET':
+#             Requests.objects.filter()
+#     else:
+#         return HttpResponse(status=401)

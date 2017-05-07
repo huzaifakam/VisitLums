@@ -32,6 +32,11 @@ urlpatterns = [
     url(r'^superuser/adminList/$', superuserAdminList),
     url(r'^superuser/guardList/$', superuserGuardList),
     url(r'^superuser/settings/$', superuserChangeSettings),
+    url(r'^host/allRequests/$', hostAllRequests),
+    url(r'^host/approvedRequests/$', hostApprovedRequests),
+    url(r'^host/pendingRequests/$', hostPendingRequests),
+    url(r'^host/failedRequests/$', hostFailedRequests),
+    url(r'^host/completedVisits/$', hostcompletedVisits),
     # url(r'^host/view/$', hostView),
 
     url(r'^admin/dashboard/$', dashboard),
