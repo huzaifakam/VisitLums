@@ -274,9 +274,11 @@ def hostNewGuestRequest(request):
 def hostAllRequests(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         results = {'requests':[]}
+        user = Profile.objects.get(user=User.objects.get(username=request.user))
         if request.method == 'GET':
-            for i in list(Requests.objects.filter(user=request.user)):
-                results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+            for i in list(Requests.objects.filter(host=user)):
+                results['requests'].append({'id': i.id, 'name': i.host.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
+            return JsonResponse(results)
     else:
         return HttpResponse(status=401)  
 
@@ -284,8 +286,9 @@ def hostAllRequests(request):
 def hostApprovedRequests(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         results = {'requests':[]}
+        user = Profile.objects.get(user=User.objects.get(username=request.user))
         if request.method == 'GET':
-            for i in list(Requests.objects.filter(approval='Approved', user=request.user)):
+            for i in list(Requests.objects.filter(approval='Approved', host=user)):
                 results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
     else:
         return HttpResponse(status=401)
@@ -294,8 +297,9 @@ def hostApprovedRequests(request):
 def hostPendingRequests(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         results = {'requests':[]}
+        user = Profile.objects.get(user=User.objects.get(username=request.user))
         if request.method == 'GET':
-            for i in list(Requests.objects.filter(approval='Pending', user=request.user)):
+            for i in list(Requests.objects.filter(approval='Pending', user=user)):
                 results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
     else:
         return HttpResponse(status=401)
@@ -304,8 +308,9 @@ def hostPendingRequests(request):
 def hostFailedRequests(request):
     if ((request.user.is_authenticated() and request.user.is_active)):
         results = {'requests':[]}
+        user = Profile.objects.get(user=User.objects.get(username=request.user))
         if request.method == 'GET':
-            for i in list(Requests.objects.filter(approval='Denied', user=request.user)):
+            for i in list(Requests.objects.filter(approval='Denied', user=user)):
                 results['requests'].append({'id': i.id, 'name': i.user.get_full_name(), 'date': i.expectedArrivalDate, 'status': i.approval})
     else:
         return HttpResponse(status=401)
