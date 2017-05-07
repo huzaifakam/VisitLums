@@ -311,6 +311,14 @@ def hostFailedRequests(request):
         return HttpResponse(status=401)
 
 # @csrf_exempt
+# def hostCompletedVisits(request):
+#     if ((request.user.is_authenticated() and request.user.is_active)):
+#         results = {'visits':[]} # TODO
+#         # if request.method == 'GET':
+#     else:
+#         return HttpResponse(status=401) 
+       
+# @csrf_exempt
 # def hostcompletedVisits(request):
 #     if ((request.user.is_authenticated() and request.user.is_active)):
 #         if request.method == 'GET':

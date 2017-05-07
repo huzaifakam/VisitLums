@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^host/approvedRequests/$', hostApprovedRequests),
     url(r'^host/pendingRequests/$', hostPendingRequests),
     url(r'^host/failedRequests/$', hostFailedRequests),
-    url(r'^host/completedVisits/$', hostcompletedVisits),
+    # url(r'^host/completedVisits/$', hostCompletedVisits),
     # url(r'^host/view/$', hostView),
 
     url(r'^admin/dashboard/$', dashboard),
