@@ -35,7 +35,6 @@ urlpatterns = [
     url(r'^host/pendingRequests/$', hostPendingRequests),
     url(r'^host/failedRequests/$', hostFailedRequests),
 
-
     url(r'^superuser/requestAdd/$', superuserRequestAdd),
     url(r'^superuser/adminList/$', superuserAdminList),
     url(r'^superuser/guardList/$', superuserGuardList),
@@ -45,7 +44,8 @@ urlpatterns = [
     url(r'^admin/dashboard/$', dashboard),
     url(r'^admin/requestCheck/$', requestCheck),
 
-
     url(r'^guard/dashboard/$', dashboard),
-    url(r'^guard/getRequest/$', getRequest),
+    url(r'^guard/getRequest/$', guardGetRequest),
+    url(r'^guard/markEntry/$', guardMarkEntry),
+    url(r'^guard/markExit/$', guardMarkExit)
 ]

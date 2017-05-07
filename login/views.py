@@ -285,7 +285,7 @@ def requestCheck(request):
     else:
         return HttpResponse(status=401)
 
-def getRequest(request):
+def guardGetRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
         if (request.method == 'GET'):
             result = {'visitors': []}
@@ -302,6 +302,26 @@ def getRequest(request):
             return JsonResponse(result)
     else:
         return HttpResponse(status=401)
+
+def guardMarkEntry(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        if (request.method == 'POST'):
+            jsonData = json.loads( request.body.decode('utf-8'))
+            r = Requests.objects.get(id=jsonData['id'])
+            v = Visits(request=r, entryTime=datetime.now(), exitTime=None)
+            v.save()
+    else:
+        return HttpResponse(status=401)
+
+def guardMarkExit(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
+        if (request.method == 'POST'):
+            jsonData = json.loads( request.body.decode('utf-8'))
+            v = Visits.objects.get(request=r)
+            v.exitTime = datetime.now()
+            v.save()
+    else:
+        return HttpResponse(status=401)    
 
 # -----------------------------------------------------------------------------------------------------------
 
