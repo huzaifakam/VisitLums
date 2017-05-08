@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^host/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         hostActivate, name='activate'),
     url(r'^host/dashboard/$', dashboard),
-    url(r'^host/accountSettings/$', hostSettings),
+    url(r'^host/accountSettings/$', changeSettings),
     url(r'^host/newGuestRequest/$', hostNewGuestRequest),
     url(r'^host/specialGuestRequest/$', hostNewGuestRequest),
 
@@ -40,7 +40,7 @@ urlpatterns = [
     url(r'^superuser/requestAdd/$', superuserRequestAdd),
     url(r'^superuser/adminList/$', superuserAdminList),
     url(r'^superuser/guardList/$', superuserGuardList),
-    url(r'^superuser/settings/$', superuserChangeSettings),
+    url(r'^superuser/settings/$', changeSettings),
     
     url(r'^admin/dashboard/$', dashboard),
     url(r'^admin/requestCheck/$', adminRequestCheck),
@@ -49,6 +49,7 @@ urlpatterns = [
     url(r'^admin/pendingRequests/$', adminPendingRequests),
     url(r'^admin/failedRequests/$', adminFailedRequests),
     url(r'^admin/completedVisits/$', adminCompletedVisits),
+    url(r'^admin/settings/$', changeSettings),
 
     url(r'^guard/dashboard/$', dashboard),
     url(r'^guard/getRequest/$', guardGetRequest),

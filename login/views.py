@@ -138,16 +138,6 @@ def hostActivate(request, uidb64, token):
         return HttpResponse(status=401)
 
 @csrf_exempt
-def hostSettings(request):
-    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
-        if request.method == 'POST':
-            return HttpResponse() # TODO: Complete this POST Request.
-        else:
-            return JsonResponse({'user': request.user.get_full_name()})
-    else:
-        return HttpResponse(status=401)
-
-@csrf_exempt
 def hostNewGuestRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
         if request.method == 'POST':
@@ -415,7 +405,7 @@ def guardMarkVisitor(request):
             r = Requests.objects.get(id=jsonData['requestID'])
             v = Visits.objects.get(request=r)
 
-            visitor = Visitor.objects.get(id=[jsonData['visitorID']])
+            visitor = Visitor.objects.get(id=jsonData['visitorID'])
 
             temp = GuestsPerVisit(visit=v, visitor=visitor, guard=user)
             temp.save()
@@ -425,8 +415,8 @@ def guardMarkVisitor(request):
 # -----------------------------------------------------------------------------------------------------------
 
 @csrf_exempt
-def superuserChangeSettings(request):
-    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 3):
+def changeSettings(request):
+    if ((request.user.is_authenticated() and request.user.is_active)):
         if request.method == 'POST':
             json_data = json.loads( request.body.decode('utf-8'))
             password1 = json_data['password1']
