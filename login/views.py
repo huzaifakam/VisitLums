@@ -132,6 +132,7 @@ def hostActivate(request, uidb64, token):
         user.is_active = True
         user.profile.email_confirmed = True
         user.save()
+        authenticate(username = user.username, password = user.password)
         login(request, user)
         return JsonResponse({"userType": 0, 'user': user.get_full_name()})
     else:
