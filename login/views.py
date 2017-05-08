@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
@@ -133,7 +133,7 @@ def hostActivate(request, uidb64, token):
         user.profile.email_confirmed = True
         user.save()
         login(request, user)
-        return HttpResponseRedirect('/host/dashboard')
+        return JsonResponse({"userType": 0, 'user': user.get_full_name()})
     else:
         return HttpResponse(status=401)
 
