@@ -228,9 +228,15 @@ def adminFailedRequests(request):
 @csrf_exempt
 def adminCompletedVisits(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 2):
-        return HttpResponse() # TODO
+        results = {'visits':[]}
+        if request.method == 'GET':
+            for i in list(Visits.objects.filter()):
+                if i.exitTime != None:
+                    visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name) for x in list(RequestedGuests.objects.filter(request=i.request))]
+                    results['visits'].append({'id': i.id, 'hostName': i.request.host.user.get_full_name(), 'name': visitorNames, 'entryTime': i.entryTime, 'exitTime': i.exitTime})
+            return JsonResponse(results)
     else:
-        return HttpResponse(status=401)
+        return HttpResponse(status=401) 
 
 @csrf_exempt
 def hostAllRequests(request):
@@ -287,12 +293,14 @@ def hostFailedRequests(request):
 @csrf_exempt
 def hostCompletedVisits(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 0):
-        results = {'visits':[]} # TODO
+        results = {'visits':[]}
         if request.method == 'GET':
             user = Profile.objects.get(user=User.objects.get(username=request.user))
 
             for i in list(Visits.objects.filter(request__host=user)):
-                print(i) # TODO: Complete it!
+                if i.exitTime != None:
+                    visitorNames = [str(x.visitor.first_name) + ' ' + str(x.visitor.last_name) for x in list(RequestedGuests.objects.filter(request=i.request))]
+                    results['visits'].append({'id': i.id, 'name': visitorNames, 'entryTime': i.entryTime, 'exitTime': i.exitTime})
             return JsonResponse(results)
     else:
         return HttpResponse(status=401) 
@@ -307,7 +315,7 @@ def dashboard(request):
                 total = len(list(Requests.objects.filter(host=user)))
                 approved = len(list(Requests.objects.filter(host=user, approval='Approved')))
                 pending = len(list(Requests.objects.filter(host=user, approval='Pending')))
-                visits = 5 # TODO: Remove this hardcoded number.
+                visits = len([x for x in list(Visits.objects.filter(request__host=user)) if x.exitTime != None])
 
                 return JsonResponse({'userType': 0, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
 
@@ -315,8 +323,8 @@ def dashboard(request):
                 total = len(list(Requests.objects.all()))
                 approved = len(list(Requests.objects.filter(approval='Approved')))
                 pending = len(list(Requests.objects.filter(approval='Pending')))
-                visits = 5 # TODO: Remove this hardcoded number.
-                return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': 5})
+                visits = len([x for x in list(Visits.objects.filter()) if x.exitTime != None])
+                return JsonResponse({'userType': 2, 'user': request.user.get_full_name(), 'total': total, 'approved': approved, 'pending': pending, 'visits': visits})
 
             elif request.user.profile.userType == 1: # Guard
                 hostList = {'hosts':[]}
