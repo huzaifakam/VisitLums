@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from login.forms import SignUpForm, AuthenticationForm
 from django.contrib import messages
-from login.models import User, Profile, Requests, Visitor, RequestedGuests, Visits
+from login.models import User, Profile, Requests, Visitor, RequestedGuests, Visits, GuestsPerVisit
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
 from django.template.loader import render_to_string
@@ -370,15 +370,17 @@ def guardGetRequest(request):
             result['numGuest'] = r.numGuests
             result['admin'] = r.admin.user.get_full_name()
             result['requestType'] = r.specialRequest
+            result['requestID'] = r.id
 
             for i in list(RequestedGuests.objects.filter(request=r)):
-                result['visitors'].append({'first_name':i.request.host.user.first_name, 'last_name':i.request.host.user.last_name, 'cnic':i.visitor.cnic, 'mobile':i.visitor.mobile})
+                result['visitors'].append({'visitorID': i.visitor.id, 'first_name':i.visitor.first_name, 'last_name':i.visitor.last_name, 'cnic':i.visitor.cnic, 'mobile':i.visitor.mobile})
             return JsonResponse(result)
         else:
             return HttpResponse()
     else:
         return HttpResponse(status=401)
 
+@csrf_exempt
 def guardMarkEntry(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
         if (request.method == 'POST'):
@@ -386,19 +388,40 @@ def guardMarkEntry(request):
             r = Requests.objects.get(id=jsonData['id'])
             v = Visits(request=r, entryTime=datetime.now(), exitTime=None)
             v.save()
+        return HttpResponse()
     else:
         return HttpResponse(status=401)
 
+@csrf_exempt
 def guardMarkExit(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
         if (request.method == 'POST'):
             jsonData = json.loads( request.body.decode('utf-8'))
+            r = Requests.objects.get(id=jsonData['id'])
             v = Visits.objects.get(request=r)
             v.exitTime = datetime.now()
             v.save()
+        return HttpResponse()
     else:
-        return HttpResponse(status=401)    
+        return HttpResponse(status=401)
 
+@csrf_exempt
+def guardMarkVisitor(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
+        if (request.method == 'POST'):
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+
+            jsonData = json.loads( request.body.decode('utf-8'))
+            r = Requests.objects.get(id=jsonData['requestID'])
+            v = Visits.objects.get(request=r)
+
+            visitor = Visitor.objects.get(id=[jsonData['visitorID']])
+
+            temp = GuestsPerVisit(visit=v, visitor=visitor, guard=user)
+            temp.save()
+        return HttpResponse()
+    else:
+        return HttpResponse(status=401)
 # -----------------------------------------------------------------------------------------------------------
 
 @csrf_exempt

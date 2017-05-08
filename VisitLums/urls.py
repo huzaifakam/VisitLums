@@ -53,5 +53,6 @@ urlpatterns = [
     url(r'^guard/dashboard/$', dashboard),
     url(r'^guard/getRequest/$', guardGetRequest),
     url(r'^guard/markEntry/$', guardMarkEntry),
-    url(r'^guard/markExit/$', guardMarkExit)
+    url(r'^guard/markExit/$', guardMarkExit),
+    url(r'^guard/markVisitor/$', guardMarkVisitor)
 ]
