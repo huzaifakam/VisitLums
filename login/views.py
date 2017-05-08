@@ -174,7 +174,7 @@ def hostNewGuestRequest(request):
                 first_name = i['first_name']
                 last_name = i['last_name']
                 cnic = i['cnic']
-                mobile = ['mobile']
+                mobile = i['mobile']
 
                 v = Visitor(first_name=first_name, last_name=last_name, cnic=cnic, mobile=mobile)
                 v.save()
@@ -332,7 +332,7 @@ def dashboard(request):
                 hostList = {'hosts':[]}
                 
                 for i in (list(Requests.objects.filter(approval='Approved'))):
-                    hostList['hosts'].append({'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
+                    hostList['hosts'].append({'id': i.id, 'name': (i.host.user.get_full_name()), 'date': i.expectedArrivalDate})
                 return JsonResponse(hostList)
 
             elif request.user.profile.userType == 3:
@@ -350,6 +350,7 @@ def adminRequestCheck(request):
             r = Requests.objects.get(id=jsonData['requestID'])
             r.approval = jsonData['approval']
             r.approvalTime = datetime.now()
+            r.admin = Profile.objects.get(user=User.objects.get(username=request.user))
             r.save()
             return HttpResponse("Request Updated")
         else:
@@ -357,21 +358,24 @@ def adminRequestCheck(request):
     else:
         return HttpResponse(status=401)
 
+@csrf_exempt
 def guardGetRequest(request):
     if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
-        if (request.method == 'GET'):
+        if (request.method == 'POST'):
             result = {'visitors': []}
             jsonData = json.loads( request.body.decode('utf-8'))
             r = Requests.objects.get(id=jsonData['id'])
 
-            result['host'] = r.host.get_full_name()
+            result['host'] = r.host.user.get_full_name()
             result['numGuest'] = r.numGuests
-            result['admin'] = r.admin.get_full_name()
+            result['admin'] = r.admin.user.get_full_name()
             result['requestType'] = r.specialRequest
 
             for i in list(RequestedGuests.objects.filter(request=r)):
-                result['visitors'].append({'first_name':i.first_name, 'last_name':i.last_name, 'cnic':i.cnic, 'mobile':i.mobile})
+                result['visitors'].append({'first_name':i.request.host.user.first_name, 'last_name':i.request.host.user.last_name, 'cnic':i.visitor.cnic, 'mobile':i.visitor.mobile})
             return JsonResponse(result)
+        else:
+            return HttpResponse()
     else:
         return HttpResponse(status=401)
 
@@ -463,19 +467,3 @@ def superuserGuardList(request):
         return JsonResponse(guards)
     else:
         return HttpResponse(status=401)
-
-# @csrf_exempt
-# def hostCompletedVisits(request):
-#     if ((request.user.is_authenticated() and request.user.is_active)):
-#         results = {'visits':[]} # TODO
-#         # if request.method == 'GET':
-#     else:
-#         return HttpResponse(status=401) 
-       
-# @csrf_exempt
-# def hostcompletedVisits(request):
-#     if ((request.user.is_authenticated() and request.user.is_active)):
-#         if request.method == 'GET':
-#             Requests.objects.filter()
-#     else:
-#         return HttpResponse(status=401)
