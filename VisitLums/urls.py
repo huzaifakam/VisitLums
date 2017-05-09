@@ -41,7 +41,7 @@ urlpatterns = [
     url(r'^superuser/adminList/$', superuserAdminList),
     url(r'^superuser/guardList/$', superuserGuardList),
     url(r'^superuser/settings/$', changeSettings),
-    
+
     url(r'^admin/dashboard/$', dashboard),
     url(r'^admin/requestCheck/$', adminRequestCheck),
     url(r'^admin/allRequests/$', adminAllRequests),
@@ -55,5 +55,6 @@ urlpatterns = [
     url(r'^guard/getRequest/$', guardGetRequest),
     url(r'^guard/markEntry/$', guardMarkEntry),
     url(r'^guard/markExit/$', guardMarkExit),
-    url(r'^guard/markVisitor/$', guardMarkVisitor)
+    url(r'^guard/markVisitor/$', guardMarkVisitor),
+    url(r'^guard/markAddVisitor/$', guardMarkAddVisitor)
 ]

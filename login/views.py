@@ -128,6 +128,7 @@ def hostActivate(request, uidb64, token):
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
+    print (token)
     if user is not None and accountActivationToken.check_token(user, token):
         user.is_active = True
         user.profile.email_confirmed = True
@@ -487,5 +488,25 @@ def superuserGuardList(request):
         for i in list(Profile.objects.filter(userType=1)):
             guards['guards'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(guards)
+    else:
+        return HttpResponse(status=401)
+
+@csrf_exempt
+def guardMarkAddVisitor(request):
+    if ((request.user.is_authenticated() and request.user.is_active) and request.user.profile.userType == 1):
+        if (request.method == 'POST'):
+            user = Profile.objects.get(user=User.objects.get(username=request.user))
+
+            jsonData = json.loads( request.body.decode('utf-8'))
+            r = Requests.objects.get(id=jsonData['requestID'])
+            v = Visits.objects.get(request=r)
+
+            for i in len(jsonData['visitors']):
+            	visitor = Visitor(first_name=i['name'], cnic=i['cnic'])
+            	visitor.save()
+
+            	temp = GuestsPerVisit(visit=v, visitor=visitor, guard=user)
+            	temp.save()
+        return HttpResponse()
     else:
         return HttpResponse(status=401)
