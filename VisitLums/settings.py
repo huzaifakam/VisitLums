@@ -30,7 +30,7 @@ SECRET_KEY = 'wp&hqx%r=ip_k4jj$8b7203ayo_0%^$pmdws9ajjv5t1835h%)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['visitlums-saimsalman.c9users.io', 'localhost', '127.0.0.1']
 
 
 # Application definition
