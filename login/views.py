@@ -499,14 +499,21 @@ def guardMarkAddVisitor(request):
 
             jsonData = json.loads( request.body.decode('utf-8'))
             r = Requests.objects.get(id=jsonData['requestID'])
-            v = Visits.objects.get(request=r)
 
-            for i in len(jsonData['visitors']):
-            	visitor = Visitor(first_name=i['name'], cnic=i['cnic'])
-            	visitor.save()
+            if (r.specialRequest == 1 and r.approved == 'Approved'):
+                v = Visits.objects.get(request=r)
 
-            	temp = GuestsPerVisit(visit=v, visitor=visitor, guard=user)
-            	temp.save()
+                for i in len(jsonData['visitors']):
+                    visitor = Visitor(first_name=i['name'], cnic=i['cnic'])
+                    visitor.save()
+
+                    temp = GuestsPerVisit(visit=v, visitor=visitor, guard=user)
+                    temp.save()
+            else:
+                if (r.specialRequest == 0):
+                    HttpResponse("Error: Not a Special Request")
+                elif (r.approved != 'Approved'):
+                    HttpResponse("Error: Request Not Approved")
         return HttpResponse()
     else:
         return HttpResponse(status=401)
