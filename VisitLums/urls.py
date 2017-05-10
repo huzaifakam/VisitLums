@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^login/$', login_),
     url(r'^logout/$', logout_),
     url(r'^host/signup/$', hostSignUp),
-    url(r'^host/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    url(r'^host/activate/(?P<uidb64>[0-9A-Za-z_\-]+)_(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         hostActivate, name='activate'),
     url(r'^host/dashboard/$', dashboard),
     url(r'^host/accountSettings/$', changeSettings),

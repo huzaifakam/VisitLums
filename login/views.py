@@ -18,6 +18,7 @@ from django.http import QueryDict
 import json
 from datetime import datetime
 
+
 # SuperUser
 try:
     if (len(list(Profile.objects.filter(userType=3))) == 0):
@@ -99,7 +100,7 @@ def hostSignUp(request):
          }
 
         if (json_data['username'][-11:] != "lums.edu.pk"):
-            return HttpResponse("Error: Email Address Account should be of LUMS.", status=500)
+            return HttpResponse("Error: Email Address Account should be of LUMS.")
 
         qdict = QueryDict('', mutable=True)
         qdict.update(dicto)
@@ -113,10 +114,12 @@ def hostSignUp(request):
             user.profile.userType = int(0) # 0 -> Hosts, 1 -> Admins, 2 -> Guards
             user.save()
 
-            currentSite = get_current_site(request)
+            # currentSite = get_current_site(request)
+            currentSite = "visitlums.herokuapp.com/#"
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = accountActivationToken.make_token(user)
-            message = 'Hi ' + str(user.get_full_name()) + ',\n\n' + 'Please click on the link below to confirm your registration:\n\n' + ('http://' + currentSite.domain + '/host/activate/' + str(uid.decode('utf-8')) + '/' + str(token) + '/')
+            token.replace('/', '_')
+            message = 'Hi ' + str(user.get_full_name()) + ',\n\n' + 'Please click on the link below to confirm your registration:\n\n' + ('https://' + currentSite + '/activate/' + str(uid.decode('utf-8')) + '/' + str(token) + '/')
             subject = 'VisitLUMS Account Activation Link'
 
             send_mail(subject, message, 'kvmmaster3@gmail.com', [user.username])
@@ -130,19 +133,20 @@ def hostSignUp(request):
 @csrf_exempt
 def hostActivate(request, uidb64, token):
     try:
+        token.replace("_", "/")
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    print (token)
     if user is not None and accountActivationToken.check_token(user, token):
         user.is_active = True
         user.profile.email_confirmed = True
         user.save()
         authenticate(username = user.username, password = user.password)
         login(request, user)
-        return JsonResponse({"userType": 0, 'user': user.get_full_name()})
+        return HttpResponse()
+        # return JsonResponse({"userType": 0, 'user': user.get_full_name()})
     else:
         return HttpResponse(status=401)
 
@@ -169,25 +173,28 @@ def hostNewGuestRequest(request):
                 numGuests = jsonData['numGuests']
 
             if (numGuests < 0):
-                return HttpResponse("Error: Number of Guests can't be negative.", status=500)
+                return HttpResponse("Error: Number of Guests can't be negative.")
+                
+            print (jsonData)
 
-            for i in (jsonData['visitors']):
-                if (' ') in i['first_name']:
-                    return HttpResponse("Error: First Name can't contain spaces.", status=500)
-                if (' ') in i['last_name']:
-                    return HttpResponse("Error: Last Name can't contain spaces.", status=500)
-                if len(i['cnic']) != 13:
-                    return HttpResponse("Error: CNIC should have exactly 13 digits. Don't add dashes.", status=500)
-                if len(i['mobile']) != 11:
-                    return HttpResponse("Error: Mobile Number should have exactly 11 digits.", status=500)
-                if (not (i['cnic'].isdigit())):
-                    return HttpResponse("Error: CNIC should only contain digits.", status=500)
-                if (not (i['mobile'].isdigit())):
-                    return HttpResponse("Error: Mobile number should only contain digits.", status=500)
-                if (not isinstance(i['date'], datetime.datetime)):
-                    return HttpResponse("Error: Format isn't correct. [Format: YYYY/MM/DD HH:MM]", status=500)
-                if (i['date'] < datetime.datetime.now()):
-                    return HttpResponse("Error: Date can't be in the past.", status=500)
+            # for i in (jsonData['visitors']):
+            # if (' ') in i['first_name']:
+            #     return HttpResponse("Error: First Name can't contain spaces.")
+            # if (' ') in i['last_name']:
+            #     return HttpResponse("Error: Last Name can't contain spaces.")
+            # if len(i['cnic']) != 13:
+            #     return HttpResponse("Error: CNIC should have exactly 13 digits. Don't add dashes.")
+            # if len(i['mobile']) != 11:
+            #     return HttpResponse("Error: Mobile Number should have exactly 11 digits.")
+            # if (not (i['cnic'].isdigit())):
+            #     return HttpResponse("Error: CNIC should only contain digits.")
+            # if (not (i['mobile'].isdigit())):
+            #     return HttpResponse("Error: Mobile number should only contain digits.")
+                    
+            # if (not isinstance(datetime(jsonData['date']), datetime.datetime)):
+            #     return HttpResponse("Error: Format isn't correct. [Format: YYYY-MM-DD HH:MM]", status=500)
+            # if (jsonData['date'] < datetime.datetime.now()):
+            #     return HttpResponse("Error: Date can't be in the past.", status=500)
 
             r = Requests(host=host, expectedArrivalDate=expectedArrivalDate, purposeVisit=purposeVisit, numGuests=numGuests, specialRequest=specialRequest, admin=admin, approval=approval, approvalTime=approvalTime)
             r.save()
@@ -632,15 +639,15 @@ def guardMarkAddVisitor(request):
                     last_name = i['name'].split(' ')[1]
 
                     if (' ') not in i['name']:
-                        return HttpResponse("Error: Provide full name.", status=500)
+                        return HttpResponse("Error: Provide full name.")
                     if (' ') in first_name:
-                        return HttpResponse("Error: First Name can't contain spaces.", status=500)
+                        return HttpResponse("Error: First Name can't contain spaces.")
                     if (' ') in last_name:
-                        return HttpResponse("Error: Last Name can't contain spaces.", status=500)                       
+                        return HttpResponse("Error: Last Name can't contain spaces.")                       
                     if len(i['cnic']) != 13:
-                        return HttpResponse("Error: CNIC should have exactly 13 digits. Don't add dashes.", status=500)
+                        return HttpResponse("Error: CNIC should have exactly 13 digits. Don't add dashes.")
                     if (not (i['cnic'].isdigit())):
-                        return HttpResponse("Error: CNIC should only contain digits.", status=500)
+                        return HttpResponse("Error: CNIC should only contain digits.")
 
                 for i in (jsonData['visitors']):
                     visitor = Visitor(first_name=i['name'], cnic=i['cnic'])
