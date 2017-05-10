@@ -36,11 +36,14 @@ urlpatterns = [
     url(r'^host/pendingRequests/$', hostPendingRequests),
     url(r'^host/failedRequests/$', hostFailedRequests),
     url(r'^host/completedVisits/$', hostCompletedVisits),
+    url(r'^host/deleteRequest/$', hostDeleteRequest),
 
     url(r'^superuser/requestAdd/$', superuserRequestAdd),
     url(r'^superuser/adminList/$', superuserAdminList),
     url(r'^superuser/guardList/$', superuserGuardList),
     url(r'^superuser/settings/$', changeSettings),
+    url(r'^superuser/deleteAdmin/$', superuserDelAdmin),
+    url(r'^superuser/deleteGuard/$', superuserDelGuard),
 
     url(r'^admin/dashboard/$', dashboard),
     url(r'^admin/requestCheck/$', adminRequestCheck),
@@ -50,6 +53,7 @@ urlpatterns = [
     url(r'^admin/failedRequests/$', adminFailedRequests),
     url(r'^admin/completedVisits/$', adminCompletedVisits),
     url(r'^admin/settings/$', changeSettings),
+    url(r'^admin/deleteRequest/$', hostDeleteRequest),
 
     url(r'^guard/dashboard/$', dashboard),
     url(r'^guard/getRequest/$', guardGetRequest),

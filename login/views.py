@@ -63,6 +63,8 @@ def login_(request):
         if form.is_valid():
             user = authenticate(username = json_data['username'], password = json_data['password'])
             if user is not None:
+                if (Profile.objects.get(user=user).archived == 1):
+                    return HttpResponse("Error: User Not Present.")
                 login(request, user)
                 if user.profile.userType == 0:
                     return JsonResponse({"userType": 0, 'user': request.user.get_full_name()}) # Host
@@ -118,8 +120,7 @@ def hostSignUp(request):
             currentSite = "visitlums.herokuapp.com/#"
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = accountActivationToken.make_token(user)
-            token.replace('/', '_')
-            message = 'Hi ' + str(user.get_full_name()) + ',\n\n' + 'Please click on the link below to confirm your registration:\n\n' + ('https://' + currentSite + '/activate/' + str(uid.decode('utf-8')) + '/' + str(token) + '/')
+            message = 'Hi ' + str(user.get_full_name()) + ',\n\n' + 'Please click on the link below to confirm your registration:\n\n' + ('https://' + currentSite + '/activate/' + str(uid.decode('utf-8')) + '_' + str(token) + '/')
             subject = 'VisitLUMS Account Activation Link'
 
             send_mail(subject, message, 'kvmmaster3@gmail.com', [user.username])
@@ -143,8 +144,8 @@ def hostActivate(request, uidb64, token):
         user.is_active = True
         user.profile.email_confirmed = True
         user.save()
-        authenticate(username = user.username, password = user.password)
-        login(request, user)
+        # authenticate(username = user.username, password = user.password)
+        # login(request, user)
         return HttpResponse()
         # return JsonResponse({"userType": 0, 'user': user.get_full_name()})
     else:
@@ -369,7 +370,6 @@ def hostFailedRequests(request):
 @csrf_exempt
 def hostCompletedVisits(request):
     json_data = json.loads( request.body.decode('utf-8'))
-    print(json_data['email'])
     tempUser = User.objects.get(username=json_data['email'])
     if ((tempUser.is_active) and tempUser.profile.userType == 0):
         results = {'visits':[]}
@@ -383,6 +383,16 @@ def hostCompletedVisits(request):
             return JsonResponse(results)
     else:
         return HttpResponse(status=401) 
+
+@csrf_exempt
+def hostDeleteRequest(request):
+    json_data = json.loads( request.body.decode('utf-8'))
+    tempUser = User.objects.get(username=json_data['email'])
+    if (tempUser.is_active and tempUser.profile.userType == 0) or (tempUser.is_active and tempUser.profile.userType == 2):
+        Requests.objects.get(id=json_data['id']).delete()
+        return HttpResponse("Request Deleted")
+    return HttpResponse(status=401)
+        
 
 # Done in Tashfeens Style - Tested for host only
 @csrf_exempt
@@ -592,16 +602,38 @@ def superuserRequestAdd(request):
 @csrf_exempt
 def superuserAdminList(request):
     json_data = json.loads( request.body.decode('utf-8'))
-    print(json_data['email'])
     tempUser = User.objects.get(username=json_data['email'])
     if ((tempUser.is_active) and tempUser.profile.userType == 3):
         admins = {'admins': []}
 
         for i in list(Profile.objects.filter(userType=2)):
-            admins['admins'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
+            if (i.archived == 0):
+                admins['admins'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(admins)
     else:
         return HttpResponse(status=401)
+        
+@csrf_exempt
+def superuserDelAdmin(request):
+    json_data = json.loads( request.body.decode('utf-8'))
+    tempUser = User.objects.get(username=json_data['email'])
+    if ((tempUser.is_active) and tempUser.profile.userType == 3):
+        temp = User.objects.get(username=json_data['adminEmail'])
+        temp_ = Profile.objects.get(user=temp)
+        temp_.archived = 1
+        temp_.save()
+    return HttpResponse("Admin Deleted")
+
+@csrf_exempt
+def superuserDelGuard(request):
+    json_data = json.loads( request.body.decode('utf-8'))
+    tempUser = User.objects.get(username=json_data['email'])
+    if ((tempUser.is_active) and tempUser.profile.userType == 3):
+        temp = User.objects.get(username=json_data['guardEmail'])
+        temp_ = Profile.objects.get(user=temp)
+        temp_.archived = 1
+        temp_.save() 
+    return HttpResponse("Guard Deleted")
 
 #Done in Tashfeens Style - Tested
 @csrf_exempt
@@ -613,7 +645,8 @@ def superuserGuardList(request):
         guards = {'guards': []}
 
         for i in list(Profile.objects.filter(userType=1)):
-            guards['guards'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
+            if (i.archived == 0):
+                guards['guards'].append({'first_name': i.user.first_name, 'last_name': i.user.last_name, 'email': i.user.username})
         return JsonResponse(guards)
     else:
         return HttpResponse(status=401)
