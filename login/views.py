@@ -164,38 +164,16 @@ def hostNewGuestRequest(request):
             purposeVisit = jsonData['purpose']
             numGuests = len(jsonData['visitors'])
             specialRequest = jsonData['specialRequest']
+            numGuests = jsonData['numGuests']
             admin = None
             approval = 'Pending'
             approvalTime = None
 
             if specialRequest == 0:
-                numGuests = 1
-            elif specialRequest == 1:
-                numGuests = jsonData['numGuests']
+                numGuests = 0
 
             if (numGuests < 0):
                 return HttpResponse("Error: Number of Guests can't be negative.")
-                
-            print (jsonData)
-
-            # for i in (jsonData['visitors']):
-            # if (' ') in i['first_name']:
-            #     return HttpResponse("Error: First Name can't contain spaces.")
-            # if (' ') in i['last_name']:
-            #     return HttpResponse("Error: Last Name can't contain spaces.")
-            # if len(i['cnic']) != 13:
-            #     return HttpResponse("Error: CNIC should have exactly 13 digits. Don't add dashes.")
-            # if len(i['mobile']) != 11:
-            #     return HttpResponse("Error: Mobile Number should have exactly 11 digits.")
-            # if (not (i['cnic'].isdigit())):
-            #     return HttpResponse("Error: CNIC should only contain digits.")
-            # if (not (i['mobile'].isdigit())):
-            #     return HttpResponse("Error: Mobile number should only contain digits.")
-                    
-            # if (not isinstance(datetime(jsonData['date']), datetime.datetime)):
-            #     return HttpResponse("Error: Format isn't correct. [Format: YYYY-MM-DD HH:MM]", status=500)
-            # if (jsonData['date'] < datetime.datetime.now()):
-            #     return HttpResponse("Error: Date can't be in the past.", status=500)
 
             r = Requests(host=host, expectedArrivalDate=expectedArrivalDate, purposeVisit=purposeVisit, numGuests=numGuests, specialRequest=specialRequest, admin=admin, approval=approval, approvalTime=approvalTime)
             r.save()
@@ -463,30 +441,29 @@ def adminRequestCheck(request):
         return HttpResponse(status=401)
 
 # Done in Tashfeens Style - Tested
-@csrf_exempt
-def guardGetRequest(request):
-    json_data = json.loads( request.body.decode('utf-8'))
-    print(json_data['email'])
-    tempUser = User.objects.get(username=json_data['email'])
-    if ((tempUser.is_active) and tempUser.profile.userType == 1):
-        if (request.method == 'POST'):
-            result = {'visitors': []}
-            jsonData = json.loads( request.body.decode('utf-8'))
-            r = Requests.objects.get(id=jsonData['id'])
+# @csrf_exempt
+# def guardGetRequest(request):
+#     json_data = json.loads( request.body.decode('utf-8'))
+#     tempUser = User.objects.get(username=json_data['email'])
+#     if ((tempUser.is_active) and tempUser.profile.userType == 1):
+#         if (request.method == 'POST'):
+#             result = {'visitors': []}
+#             jsonData = json.loads( request.body.decode('utf-8'))
+#             r = Requests.objects.get(id=jsonData['id'])
 
-            result['host'] = r.host.user.get_full_name()
-            result['numGuest'] = r.numGuests
-            result['admin'] = r.admin.user.get_full_name()
-            result['requestType'] = r.specialRequest
-            result['requestID'] = r.id
+#             result['host'] = r.host.user.get_full_name()
+#             result['numGuest'] = r.numGuests
+#             result['admin'] = r.admin.user.get_full_name()
+#             result['requestType'] = r.specialRequest
+#             result['requestID'] = r.id
 
-            for i in list(RequestedGuests.objects.filter(request=r)):
-                result['visitors'].append({'visitorID': i.visitor.id, 'first_name':i.visitor.first_name, 'last_name':i.visitor.last_name, 'cnic':i.visitor.cnic, 'mobile':i.visitor.mobile})
-            return JsonResponse(result)
-        else:
-            return HttpResponse()
-    else:
-        return HttpResponse(status=401)
+#             for i in list(RequestedGuests.objects.filter(request=r)):
+#                 result['visitors'].append({'visitorID': i.visitor.id, 'first_name':i.visitor.first_name, 'last_name':i.visitor.last_name, 'cnic':i.visitor.cnic, 'mobile':i.visitor.mobile})
+#             return JsonResponse(result)
+#         else:
+#             return HttpResponse()
+#     else:
+#         return HttpResponse(status=401)
 
 # Done in Tashfeens Style - Tested
 @csrf_exempt
